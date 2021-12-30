@@ -11,8 +11,6 @@ class User(db.Model):
     id = Column(Integer, primary_key= True, autoincrement=True)
     username = Column(String(20))
     password = Column(String(20))
-    sex = Column(String(5), nullable=False)
-    email = Column(String(10), nullable=False)
     login_status = Column(Boolean, default = False)
     register_date = Column(DateTime, default = datetime.now())
     type = Column(String(20))
@@ -26,9 +24,12 @@ class Customer(User):
 
     id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     name = Column(String(30), nullable=False)
+    gender = Column(String(5), nullable=False)
+    email = Column(String(10), nullable=False)
     id_number = Column(String(10), nullable=False) #Căn cước công dân
     nationality = Column(String(20), nullable=False)
     address = Column(String(60), nullable=False)
+    location_id = Column(Integer, ForeignKey('location.id'), nullable=False)
     phone_number = Column(String(10), nullable=False)
     customer_type_id = Column(Integer, ForeignKey('customer_type.id'), nullable=False)
     rental_vouchers = relationship('RentalVoucher', backref='customer', lazy=True)
@@ -57,8 +58,11 @@ class Staff(User):
 
     id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     name = Column(String(30), nullable=False)
+    gender = Column(String(5), nullable=False)
+    email = Column(String(10), nullable=False)
     id_number = Column(String(10), nullable=False)
     address = Column(String(60), nullable=False)
+    location_id = Column(Integer, ForeignKey('location.id'), nullable=False)
     phone_number = Column(String(10), nullable=False)
     experience = Column(Integer, nullable=False) #số tháng làm việc
 
@@ -66,10 +70,20 @@ class Staff(User):
         'polymorphic_identity': 'staff'
     }
 
+class Location(db.Model):
+    __tablename__ = 'location'
+
+    id = Column(Integer, primary_key=True)
+    city = Column(String(20), nullable=False)
+    country = Column(String(20), nullable=False)
+    staff = relationship("Staff", backref='location', lazy=True)
+    customer = relationship("Customer", backref='location', lazy=True)
+
 class Administrator(User):
     __tablename__ = 'admin'
 
-    administrator_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
+    id = Column(Integer, ForeignKey('user.id'), primary_key=True)
+    email = Column(String(10), nullable=False)
 
     __mapper_args__ = {
         'polymorphic_identity': 'administrator'
@@ -85,7 +99,6 @@ class Room(db.Model):
     capacity = Column(Integer, nullable=False, default=0) #số người trên phòng
     description = Column(String(60))
     room_type_id = Column(Integer, ForeignKey('room_type.id'), nullable=False)
-    maximum_customer = Column(Integer, nullable=False, default=1)
     rental_vouchers = relationship('RentalVoucher', backref='room', lazy=True)
     order_vouchers = relationship('OrderVoucher', backref='room', lazy=True)
 
@@ -97,6 +110,7 @@ class RoomType(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement = True)
     room_type_name = Column(String(20), nullable=False)
+    maximum_customer = Column(Integer, nullable=False)
     price = Column(Integer, nullable=False)
     rooms = relationship('Room', backref='room_type', lazy=False)
 

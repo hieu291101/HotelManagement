@@ -1,9 +1,8 @@
 from HotelManagement import admin, db
-from HotelManagement.models import Customer, CustomerType, Staff,  Room, RoomType, Bill, Surchange, RentalVoucher,\
+from HotelManagement.models import User, Administrator, Customer, CustomerType, Staff,  Room, RoomType, Bill, Surchange, RentalVoucher,\
     OrderVoucher
 from flask_admin.contrib.sqla import ModelView
 
-db.create_all()
 
 class CustomerView(ModelView):
     can_view_details = True
@@ -140,6 +139,8 @@ class OrderVoucherView(ModelView):
         'bill': 'Mã hóa đơn'
     }
 
+admin. add_view(ModelView(User, db.session, name='Người dùng'))
+admin. add_view(ModelView(Administrator, db.session, name='admin'))
 admin. add_view(CustomerView(Customer, db.session, name='Thông tin khách hàng', category='Khách hàng'))
 admin. add_view(CustomerTypeView(CustomerType, db.session, name='Loại khách', category='Khách hàng'))
 admin. add_view(StaffView(Staff, db.session, name='Nhân viên'))

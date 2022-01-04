@@ -2,17 +2,19 @@ from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, Foreig
 from sqlalchemy.orm import relationship, backref
 from HotelManagement import db
 from datetime import datetime
+from flask_login import UserMixin
 
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key= True, autoincrement=True)
-    username = Column(String(20))
-    password = Column(String(20))
+    username = Column(String(50), nullable=False, unique=True)
+    password = Column(String(50), nullable=False)
     login_status = Column(Boolean, default = False)
     register_date = Column(DateTime, default = datetime.now())
+    avatar = Column(String(100))
     type = Column(String(20))
 
     __mapper_args__ = {
@@ -83,7 +85,7 @@ class Administrator(User):
     __tablename__ = 'admin'
 
     id = Column(Integer, ForeignKey('user.id'), primary_key=True)
-    email = Column(String(10), nullable=False)
+    email = Column(String(50), nullable=False)
 
     __mapper_args__ = {
         'polymorphic_identity': 'administrator'
@@ -163,5 +165,6 @@ class OrderVoucher(db.Model):
     def __str__(self):
         return self.name
 
-
+if __name__ == "__main__":
+    db.create_all()
 

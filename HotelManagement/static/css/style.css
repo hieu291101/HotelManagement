@@ -1,0 +1,114 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@200;300;400;500;600&display=swap');
+</style>
+
+:root {
+    --primary-color: #222;
+    --gray-color: #777;
+}
+
+html, body {
+     height:100%;
+     width:100%;
+     font-family: 'Lexend Deca', sans-serif;
+}
+
+*{
+    font-family: 'Lexend Deca', sans-serif;
+}
+
+.navbar {
+    padding: 1rem;
+    background-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.navbar-nav li {
+    padding-right: 1.1em;
+}
+
+.navbar a{
+    color: gray;
+    border-bottom: 2px solid transparent;
+}
+
+.navbar-nav a:hover{
+    color: #222;
+    border-bottom: 2px solid #222;
+    transition: .3s ease-in-out;
+}
+
+.carousel {
+    top: 0;
+}
+
+.carousel-caption {
+    position: absolute;
+    top: 50%;
+    transform:  translateY(-50%);
+}
+
+.carousel-caption h3 {
+    text-shadow: 2px 0 0 #fff, -2px 0 0 #fff, 0 2px 0 #fff, 0 -2px 0 #fff, 1px 1px #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
+    color: #228B22;
+}
+
+.carousel-inner img {
+    height: 70vh;
+    width: 100%;
+    object-fit: cover;
+}
+
+.booking {
+    background-color: #228B22;
+    padding: 3rem;
+}
+
+.booking .form-group label{
+    color: white;
+    font-size: 1em;
+    font-weight: 500;
+}
+
+.booking .form-group input{
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid white;
+    cursor: text;
+    color: white;
+    font-weight: 300;
+}
+
+.booking ::placeholder {
+    color: white;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.booking-btn {
+   width: 100%;
+   border: 3px solid white;
+   color: white;
+   font-size: 1em;
+   font-weight: 500;
+}
+
+.booking-btn:hover {
+    color: #228B22;
+    border: 3px solid transparent;
+    background: white;
+}
+
+
+
+

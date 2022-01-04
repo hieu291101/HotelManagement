@@ -1,5 +1,6 @@
 from HotelManagement import admin, db
-from HotelManagement.models import User, Administrator, Customer, CustomerType, Staff,  Room, RoomType, Bill, Surchange, RentalVoucher,\
+from HotelManagement.models import User, Administrator, Customer, CustomerType, Staff, Room, RoomType, Bill, Surchange, \
+    RentalVoucher, \
     OrderVoucher
 from flask_admin.contrib.sqla import ModelView
 
@@ -23,7 +24,9 @@ class CustomerView(ModelView):
         'phone_number': 'Số điện thoại',
         'customer_type': 'Loại khách hàng'
     }
-    form_excluded_columns = ['rental_vouchers', 'order_vouchers', 'login_status', 'register_date', 'type', 'customer_type']
+    form_excluded_columns = ['rental_vouchers', 'order_vouchers', 'login_status', 'register_date', 'type',
+                             'customer_type']
+
 
 class StaffView(ModelView):
     can_view_details = True
@@ -45,6 +48,7 @@ class StaffView(ModelView):
     }
     form_excluded_columns = ['login_status', 'register_date', 'type']
 
+
 class CustomerTypeView(ModelView):
     can_view_details = True
     can_export = True
@@ -55,6 +59,7 @@ class CustomerTypeView(ModelView):
         'customer_index': 'Hệ số'
     }
     form_excluded_columns = ['customers']
+
 
 class RoomView(ModelView):
     can_view_details = True
@@ -71,6 +76,7 @@ class RoomView(ModelView):
     }
     form_excluded_columns = ['rental_vouchers', 'order_vouchers', 'status', 'capacity']
 
+
 class RoomTypeView(ModelView):
     can_view_details = True
     can_export = True
@@ -81,6 +87,7 @@ class RoomTypeView(ModelView):
         'price': 'Giá phòng(nghìn đồng)',
     }
     form_excluded_columns = ['rooms']
+
 
 class BillView(ModelView):
     can_view_details = True
@@ -96,6 +103,7 @@ class BillView(ModelView):
         'surchange': 'Phụ thu'
     }
 
+
 class SurchangeView(ModelView):
     can_view_details = True
     can_export = True
@@ -107,6 +115,7 @@ class SurchangeView(ModelView):
         'surchange': 'Phụ thu'
     }
     form_excluded_columns = ['bills']
+
 
 class RentalVoucherView(ModelView):
     can_view_details = True
@@ -122,6 +131,7 @@ class RentalVoucherView(ModelView):
         'room': 'Mã phòng',
         'bill': 'Mã hóa đơn'
     }
+
 
 class OrderVoucherView(ModelView):
     can_view_details = True
@@ -139,19 +149,19 @@ class OrderVoucherView(ModelView):
         'bill': 'Mã hóa đơn'
     }
 
-admin. add_view(ModelView(User, db.session, name='Người dùng'))
-admin. add_view(ModelView(Administrator, db.session, name='admin'))
-admin. add_view(CustomerView(Customer, db.session, name='Thông tin khách hàng', category='Khách hàng'))
-admin. add_view(CustomerTypeView(CustomerType, db.session, name='Loại khách', category='Khách hàng'))
-admin. add_view(StaffView(Staff, db.session, name='Nhân viên'))
-admin. add_view(RoomView(Room, db.session, name='Thông tin phòng', category='Phòng'))
-admin. add_view(RoomTypeView(RoomType, db.session, name='Loại phòng', category='Phòng'))
-admin. add_view(BillView(Bill, db.session, name='Danh sách hóa đơn', category='Hóa đơn'))
-admin. add_view(SurchangeView(Surchange, db.session, name='Phụ thu', category='Hóa đơn'))
-admin. add_view(RentalVoucherView(RentalVoucher, db.session, name='Phiếu thuê'))
-admin. add_view(OrderVoucherView(OrderVoucher, db.session, name='Phiếu đặt'))
+
+admin.add_view(ModelView(User, db.session, name='Người dùng'))
+admin.add_view(ModelView(Administrator, db.session, name='admin'))
+admin.add_view(CustomerView(Customer, db.session, name='Thông tin khách hàng', category='Khách hàng'))
+admin.add_view(CustomerTypeView(CustomerType, db.session, name='Loại khách', category='Khách hàng'))
+admin.add_view(StaffView(Staff, db.session, name='Nhân viên'))
+admin.add_view(RoomView(Room, db.session, name='Thông tin phòng', category='Phòng'))
+admin.add_view(RoomTypeView(RoomType, db.session, name='Loại phòng', category='Phòng'))
+admin.add_view(BillView(Bill, db.session, name='Danh sách hóa đơn', category='Hóa đơn'))
+admin.add_view(SurchangeView(Surchange, db.session, name='Phụ thu', category='Hóa đơn'))
+admin.add_view(RentalVoucherView(RentalVoucher, db.session, name='Phiếu thuê'))
+admin.add_view(OrderVoucherView(OrderVoucher, db.session, name='Phiếu đặt'))
 
 admin.add_sub_category(name="customer", parent_name="Khách hàng")
 admin.add_sub_category(name="room", parent_name="Phòng")
 admin.add_sub_category(name="bill", parent_name="Hóa đơn")
-

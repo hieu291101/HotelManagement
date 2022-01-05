@@ -2,13 +2,31 @@ from HotelManagement import admin, db
 from HotelManagement.models import User, Administrator, Customer, CustomerType, Staff,  Room, RoomType, Bill, Surchange, RentalVoucher,\
     OrderVoucher
 from flask_admin.contrib.sqla import ModelView
+from flask_admin import BaseView,expose
+from flask_login import logout_user, current_user
+from flask import redirect
 
-
-class CustomerView(ModelView):
+class CommonModelView(ModelView):
     can_view_details = True
     can_export = True
     edit_modal = True
     details_modal = True
+
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.type == 'administrator'
+
+class AdminView(CommonModelView):
+    column_exclude_list = ['type']
+    column_labels = {
+        'username': 'Tài khoản',
+        'password': 'Mật khẩu',
+        'sex': 'Giới tính',
+        'login_status': 'Trạng thái đăng nhập',
+        'register_date': 'Ngày đăng ký'
+    }
+    form_excluded_columns = ['login_status', 'register_date', 'type']
+
+class CustomerView(CommonModelView):
     column_exclude_list = ['type']
     column_labels = {
         'username': 'Tài khoản',
@@ -25,11 +43,7 @@ class CustomerView(ModelView):
     }
     form_excluded_columns = ['rental_vouchers', 'order_vouchers', 'login_status', 'register_date', 'type', 'customer_type']
 
-class StaffView(ModelView):
-    can_view_details = True
-    can_export = True
-    edit_modal = True
-    details_modal = True
+class StaffView(CommonModelView):
     column_exclude_list = ['type']
     column_labels = {
         'username': 'Tài khoản',
@@ -45,22 +59,14 @@ class StaffView(ModelView):
     }
     form_excluded_columns = ['login_status', 'register_date', 'type']
 
-class CustomerTypeView(ModelView):
-    can_view_details = True
-    can_export = True
-    edit_modal = True
-    details_modal = True
+class CustomerTypeView(CommonModelView):
     column_labels = {
         'customer_type': 'Loại khách hàng',
         'customer_index': 'Hệ số'
     }
     form_excluded_columns = ['customers']
 
-class RoomView(ModelView):
-    can_view_details = True
-    can_export = True
-    edit_modal = True
-    details_modal = True
+class RoomView(CommonModelView):
     column_exclude_list = ['capacity']
     column_labels = {
         'room_name': 'Tên phòng',
@@ -71,22 +77,14 @@ class RoomView(ModelView):
     }
     form_excluded_columns = ['rental_vouchers', 'order_vouchers', 'status', 'capacity']
 
-class RoomTypeView(ModelView):
-    can_view_details = True
-    can_export = True
-    edit_modal = True
-    details_modal = True
+class RoomTypeView(CommonModelView):
     column_labels = {
         'room_type_name': 'Tên loại phòng',
         'price': 'Giá phòng(nghìn đồng)',
     }
     form_excluded_columns = ['rooms']
 
-class BillView(ModelView):
-    can_view_details = True
-    can_export = True
-    edit_modal = True
-    details_modal = True
+class BillView(CommonModelView):
     can_create = False
     can_edit = False
     column_display_pk = True
@@ -96,11 +94,7 @@ class BillView(ModelView):
         'surchange': 'Phụ thu'
     }
 
-class SurchangeView(ModelView):
-    can_view_details = True
-    can_export = True
-    edit_modal = True
-    details_modal = True
+class SurchangeView(CommonModelView):
     column_display_pk = True
     column_labels = {
         'id': 'Mã phụ thu',
@@ -108,11 +102,7 @@ class SurchangeView(ModelView):
     }
     form_excluded_columns = ['bills']
 
-class RentalVoucherView(ModelView):
-    can_view_details = True
-    can_export = True
-    edit_modal = True
-    details_modal = True
+class RentalVoucherView(CommonModelView):
     can_create = False
     can_edit = False
     column_labels = {
@@ -123,11 +113,7 @@ class RentalVoucherView(ModelView):
         'bill': 'Mã hóa đơn'
     }
 
-class OrderVoucherView(ModelView):
-    can_view_details = True
-    can_export = True
-    edit_modal = True
-    details_modal = True
+class OrderVoucherView(CommonModelView):
     can_create = False
     can_edit = False
     column_labels = {
@@ -139,8 +125,23 @@ class OrderVoucherView(ModelView):
         'bill': 'Mã hóa đơn'
     }
 
-admin. add_view(ModelView(User, db.session, name='Người dùng'))
-admin. add_view(ModelView(Administrator, db.session, name='admin'))
+class AuthenticatedBaseView(BaseView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.type == 'administrator'
+
+class LogOutView(AuthenticatedBaseView):
+    @expose('/')
+    def index(self):
+        logout_user()
+
+        return redirect('/admin')
+
+class StatsView(AuthenticatedBaseView):
+    @expose('/')
+    def index(self):
+        return self.render('admin/stats.html')
+
+admin.add_view(AdminView(Administrator, db.session, name="Nhà quản trị"))
 admin. add_view(CustomerView(Customer, db.session, name='Thông tin khách hàng', category='Khách hàng'))
 admin. add_view(CustomerTypeView(CustomerType, db.session, name='Loại khách', category='Khách hàng'))
 admin. add_view(StaffView(Staff, db.session, name='Nhân viên'))
@@ -150,6 +151,8 @@ admin. add_view(BillView(Bill, db.session, name='Danh sách hóa đơn', categor
 admin. add_view(SurchangeView(Surchange, db.session, name='Phụ thu', category='Hóa đơn'))
 admin. add_view(RentalVoucherView(RentalVoucher, db.session, name='Phiếu thuê'))
 admin. add_view(OrderVoucherView(OrderVoucher, db.session, name='Phiếu đặt'))
+admin.add_view(StatsView(name='Thống kê'))
+admin.add_view(LogOutView(name='Đăng xuất'))
 
 admin.add_sub_category(name="customer", parent_name="Khách hàng")
 admin.add_sub_category(name="room", parent_name="Phòng")

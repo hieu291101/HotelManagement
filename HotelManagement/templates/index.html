@@ -32,13 +32,13 @@
     <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">Trang chủ</a>
+                <a class="nav-link" href="{{ url_for('home') }}">Trang chủ</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Dịch vụ</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Đăng ký | Đăng nhập</a>
+                <a class="nav-link" href="{{ url_for('login_register') }}">Đăng ký | Đăng nhập</a>
             </li>
         </ul>
     </div>
@@ -81,7 +81,7 @@
 
 <!-- Booking voucher-->
 <div class="container-fluid">
-    <form class="row jumbotron booking">
+    <form method="post" class="row jumbotron booking" action="/">
         <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3 col-xl-3">
             <div class="form-group">
                 <label for="checkin">NGÀY THUÊ</label>
@@ -100,14 +100,28 @@
             <div class="form-group">
                 <label for="adults">KHÁCH HÀNG</label>
                 <input type="number" class="form-control" name="adults"
-                       placeholder="Nhập số lượng khách..." id="adults">
+                       placeholder="Nhập số lượng khách..." id="adults"
+                       min="1" max="60">
             </div>
         </div>
         <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3 col-xl-3">
             <br>
-            <button class="booking-btn btn btn-lg" type="button">KIỂM TRA NGÀY</button>
+            <button class="booking-btn btn btn-lg" type="submit">KIỂM TRA NGÀY</button>
         </div>
     </form>
+</div>
+
+<div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                      <span>{{ message }}</span>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 </div>
 
 <footer>

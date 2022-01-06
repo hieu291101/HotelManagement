@@ -4,6 +4,7 @@ import utils
 from flask_login import login_user
 from flask import render_template, request, redirect
 
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -16,13 +17,15 @@ def admin_login():
 
     user = utils.check_login(username=username, password=password)
     if user:
-        return login_user(user=user)
+        login_user(user=user)
 
     return redirect('/admin')
+
 
 @login.user_loader
 def load_user(user_id):
     return utils.get_user_by_id(user_id=user_id)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,8 +1,22 @@
 from HotelManagement import admin, db
 from HotelManagement.models import User, Administrator, Customer, CustomerType, Staff, Room, RoomType, Bill, Surchange, \
-    RentalVoucher, \
-    OrderVoucher
+    RentalVoucher, OrderVoucher, UserRole
 from flask_admin.contrib.sqla import ModelView
+from flask_admin import BaseView, expose
+from flask_login import login_user, logout_user, current_user
+from flask import redirect
+
+
+# Đã đăng nhập và có role là admin
+class AuthenticationModelView(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
+
+
+# Đã đăng nhập 
+class AuthenticationBaseView(BaseView):
+    def is_accessible(self):
+        return current_user.is_authenticated
 
 
 class CustomerView(ModelView):
@@ -49,7 +63,7 @@ class StaffView(ModelView):
     form_excluded_columns = ['login_status', 'register_date', 'type']
 
 
-class CustomerTypeView(ModelView):
+class CustomerTypeView(AuthenticationModelView):
     can_view_details = True
     can_export = True
     edit_modal = True
@@ -61,7 +75,7 @@ class CustomerTypeView(ModelView):
     form_excluded_columns = ['customers']
 
 
-class RoomView(ModelView):
+class RoomView(AuthenticationModelView):
     can_view_details = True
     can_export = True
     edit_modal = True
@@ -77,7 +91,7 @@ class RoomView(ModelView):
     form_excluded_columns = ['rental_vouchers', 'order_vouchers', 'status', 'capacity']
 
 
-class RoomTypeView(ModelView):
+class RoomTypeView(AuthenticationModelView):
     can_view_details = True
     can_export = True
     edit_modal = True
@@ -150,17 +164,35 @@ class OrderVoucherView(ModelView):
     }
 
 
-admin.add_view(ModelView(User, db.session, name='Người dùng'))
-admin.add_view(ModelView(Administrator, db.session, name='admin'))
-admin.add_view(CustomerView(Customer, db.session, name='Thông tin khách hàng', category='Khách hàng'))
-admin.add_view(CustomerTypeView(CustomerType, db.session, name='Loại khách', category='Khách hàng'))
-admin.add_view(StaffView(Staff, db.session, name='Nhân viên'))
-admin.add_view(RoomView(Room, db.session, name='Thông tin phòng', category='Phòng'))
-admin.add_view(RoomTypeView(RoomType, db.session, name='Loại phòng', category='Phòng'))
-admin.add_view(BillView(Bill, db.session, name='Danh sách hóa đơn', category='Hóa đơn'))
-admin.add_view(SurchangeView(Surchange, db.session, name='Phụ thu', category='Hóa đơn'))
-admin.add_view(RentalVoucherView(RentalVoucher, db.session, name='Phiếu thuê'))
-admin.add_view(OrderVoucherView(OrderVoucher, db.session, name='Phiếu đặt'))
+class LogoutView(AuthenticationBaseView):
+    @expose('/')
+    def index(self):
+        logout_user()
+
+        return redirect('/admin')
+
+
+class StatsView(AuthenticationBaseView):
+    @expose('/')
+    def index(self):
+        return self.render('admin/stats.html')
+
+
+admin.add_view(AuthenticationModelView(User, db.session, name='Người dùng'))
+admin.add_view(AuthenticationModelView(Administrator, db.session, name='admin'))
+admin.add_view(AuthenticationModelView(Customer, db.session, name='Thông tin khách hàng', category='Khách hàng'))
+admin.add_view(AuthenticationModelView(CustomerType, db.session, name='Loại khách', category='Khách hàng'))
+admin.add_view(AuthenticationModelView(Staff, db.session, name='Nhân viên'))
+
+admin.add_view(AuthenticationModelView(Room, db.session, name='Thông tin phòng', category='Phòng'))
+admin.add_view(AuthenticationModelView(RoomType, db.session, name='Loại phòng', category='Phòng'))
+admin.add_view(AuthenticationModelView(Bill, db.session, name='Danh sách hóa đơn', category='Hóa đơn'))
+admin.add_view(AuthenticationModelView(Surchange, db.session, name='Phụ thu', category='Hóa đơn'))
+admin.add_view(AuthenticationModelView(RentalVoucher, db.session, name='Phiếu thuê'))
+admin.add_view(AuthenticationModelView(OrderVoucher, db.session, name='Phiếu đặt'))
+
+admin.add_view(LogoutView(name='Đăng xuất'))
+admin.add_view(StatsView(name='Thống kê báo cáo'))
 
 admin.add_sub_category(name="customer", parent_name="Khách hàng")
 admin.add_sub_category(name="room", parent_name="Phòng")

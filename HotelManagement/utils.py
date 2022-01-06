@@ -2,8 +2,10 @@ import hashlib
 
 from HotelManagement.models import User, Customer, Staff, Administrator
 
+
 def get_user_by_id(user_id):
     return User.query.get(user_id)
+
 
 def check_login(username, password):
     if username and password:

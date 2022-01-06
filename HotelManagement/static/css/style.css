@@ -23,7 +23,7 @@ html, body {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
-.navbar-nav li {
+.navbar-nav .nav-item-common {
     padding-right: 1.1em;
 }
 
@@ -41,6 +41,25 @@ html, body {
     color: #222;
     border-bottom: 2px solid #222;
     transition: .3s ease-in-out;
+}
+
+.nav-item-login {
+    border-left: 3px solid #777;
+    padding-left: 1.1em;
+}
+
+.nav-item-login img{
+    object-fit: cover;
+    border: 3px solid #777;
+}
+
+.alert-box {
+    position: fixed;
+    top: 5rem;
+    left: 50%;
+    transform:  translateX(-50%);
+    z-index: 99999;
+    opacity: 95%;
 }
 
 .carousel {
@@ -132,6 +151,7 @@ input[type=number] {
 }
 
 .h-custom .lead {
+    margin-right: 2rem;
     margin-right: 2rem;
 }
 

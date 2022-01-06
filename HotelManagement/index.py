@@ -21,7 +21,7 @@ def home():
             checkoutdatetime = datetime.datetime.strptime(checkindate, "%Y-%m-%d")
             check_dates = utils.check_date(datetime.datetime.now(), checkindatetime)
         else:
-            flash('Chưa nhập đủ giá trị', 'warning')
+            flash('Chưa nhập đủ giá trị', 'danger')
             return redirect(request.url)
 
         # Kiểm tra các ràng buộc
@@ -33,15 +33,30 @@ def home():
             return redirect(request.url)
 
 
-        return redirect('/login-register')
+        return redirect('/user-login')
 
     return render_template('index.html')
 
-@app.route('/login-register')
-def login_register():
+@app.route('/user-login', methods=['get', 'post'])
+def user_login():
+    if request.method.__eq__('POST'):
+        req = request.form
+        username = req.get('username')
+        password = req.get('password')
+
+        user = utils.check_login(username=username, password=password)
+        if user:
+            login_user(user=user)
+        else:
+            flash('Tài khoản hoặc mật khầu không khả dụng', 'warning')
+            return redirect(request.url)
+
     return render_template('login.html')
 
-
+@app.route('/user-logout')
+def user_logout():
+    logout_user()
+    return redirect(url_for('user_login'))
 
 @app.route('/admin-login', methods=['post'])
 def admin_login():

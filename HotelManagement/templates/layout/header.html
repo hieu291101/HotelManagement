@@ -1,12 +1,12 @@
 <!-- Navigation -->
-<nav class="navbar navbar-expand-md sticky-top">
-    <a href="#" class="navbar-brand">BookingHotel.com</a>
+<nav id="nav" class="navbar navbar-expand-md sticky-top">
+    <a href="{{ url_for('home') }}" class="navbar-brand">BookingHotel.com</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
         <i class="fas fa-bars"></i>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item nav-item-common active">
+            <li class="{{ 'nav-item nav-item-common active' if active_page == 'home' else 'nav-item nav-item-common' }}">
                 <a class="nav-link" href="{{ url_for('home') }}">Trang chủ</a>
             </li>
             <li class="nav-item nav-item-common">
@@ -23,13 +23,13 @@
                     {{ current_user.name }}
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item nav-item-common">
                 <a class="nav-link" href="{{ url_for('user_logout') }}">
                     Đăng xuất
                 </a>
             </li>
             {% else %}
-                <li class="nav-item">
+                <li class="{{ 'nav-item nav-item-common active' if active_page == 'user_login' else 'nav-item nav-item-common' }}">
                 <a class="nav-link" href="{{ url_for('user_login') }}">Đăng ký | Đăng nhập</a>
             </li>
             {% endif %}
@@ -49,3 +49,8 @@
     {% endif %}
     {% endwith %}
 </div>
+
+<script>
+  $(document).ready(function () {
+  $("#{{request.endpoint}}").addClass("active"); })
+</script>

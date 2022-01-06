@@ -1,19 +1,52 @@
+import datetime
+
 from HotelManagement import app, login
 from HotelManagement.admin import *
 import utils
 from flask_login import login_user
-from flask import render_template, request, redirect
+from flask import render_template, request, redirect, flash, url_for
 
 
-@app.route('/')
+@app.route('/', methods=["GET", "POST"])
 def home():
+    if request.method == "POST":
+        req = request.form
+        checkindate = req.get('checkindate')
+        checkoutdate = req.get('checkoutdate')
+        adults = req.get('adults')
+
+        # Kiểm tra nhập đủ giá trị hay chưa
+        if checkindate and checkoutdate and adults:
+            checkindatetime = datetime.datetime.strptime(checkindate, "%Y-%m-%d")
+            checkoutdatetime = datetime.datetime.strptime(checkindate, "%Y-%m-%d")
+            check_dates = utils.check_date(datetime.datetime.now(), checkindatetime)
+        else:
+            flash('Chưa nhập đủ giá trị', 'warning')
+            return redirect(request.url)
+
+        # Kiểm tra các ràng buộc
+        if check_dates == False:
+            flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "warning")
+            return redirect(request.url)
+        elif checkindatetime < datetime.datetime.now() and (checkindatetime - checkoutdatetime).days == 0:
+            flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "warning")
+            return redirect(request.url)
+
+        return redirect('/login-register')
+
     return render_template('index.html')
+
+
+@app.route('/login-register')
+def login_register():
+    return render_template('login.html')
 
 
 @app.route('/admin-login', methods=['post'])
 def admin_login():
-    username = request.form.get('username')
-    password = request.form.get('password')
+    req = request.form
+    username = req.get('username')
+    password = req.get('password')
 
     user = utils.check_login(username=username, password=password)
     if user:

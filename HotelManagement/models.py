@@ -18,8 +18,9 @@ class User(db.Model, UserMixin):
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(50), nullable=False, unique=True)
     password = Column(String(50), nullable=False)
-    login_status = Column(Boolean, default=False)
+    login_status = Column(Boolean, default=True)
     register_date = Column(DateTime, default=datetime.now())
+
     avatar = Column(String(100))
     # type = Column(String(20))
     user_role = Column(Enum(UserRole), default=UserRole.CUSTOMER)

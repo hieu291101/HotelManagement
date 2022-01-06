@@ -3,7 +3,7 @@ from HotelManagement.models import User, Administrator, Customer, CustomerType, 
     RentalVoucher, OrderVoucher, UserRole
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import BaseView, expose
-from flask_login import login_user, logout_user, current_user
+from flask_login import logout_user, current_user
 from flask import redirect
 
 
@@ -13,17 +13,35 @@ class AuthenticationModelView(ModelView):
         return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
 
 
-# Đã đăng nhập 
+# Đã đăng nhập
 class AuthenticationBaseView(BaseView):
     def is_accessible(self):
         return current_user.is_authenticated
 
 
-class CustomerView(ModelView):
+class CommonModelView(ModelView):
     can_view_details = True
     can_export = True
     edit_modal = True
     details_modal = True
+
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.type == 'administrator'
+
+
+class AdminView(CommonModelView):
+    column_exclude_list = ['type']
+    column_labels = {
+        'username': 'Tài khoản',
+        'password': 'Mật khẩu',
+        'sex': 'Giới tính',
+        'login_status': 'Trạng thái đăng nhập',
+        'register_date': 'Ngày đăng ký'
+    }
+    form_excluded_columns = ['login_status', 'register_date', 'type']
+
+
+class CustomerView(CommonModelView):
     column_exclude_list = ['type']
     column_labels = {
         'username': 'Tài khoản',
@@ -42,11 +60,7 @@ class CustomerView(ModelView):
                              'customer_type']
 
 
-class StaffView(ModelView):
-    can_view_details = True
-    can_export = True
-    edit_modal = True
-    details_modal = True
+class StaffView(CommonModelView):
     column_exclude_list = ['type']
     column_labels = {
         'username': 'Tài khoản',
@@ -63,11 +77,7 @@ class StaffView(ModelView):
     form_excluded_columns = ['login_status', 'register_date', 'type']
 
 
-class CustomerTypeView(AuthenticationModelView):
-    can_view_details = True
-    can_export = True
-    edit_modal = True
-    details_modal = True
+class CustomerTypeView(CommonModelView):
     column_labels = {
         'customer_type': 'Loại khách hàng',
         'customer_index': 'Hệ số'
@@ -75,11 +85,7 @@ class CustomerTypeView(AuthenticationModelView):
     form_excluded_columns = ['customers']
 
 
-class RoomView(AuthenticationModelView):
-    can_view_details = True
-    can_export = True
-    edit_modal = True
-    details_modal = True
+class RoomView(CommonModelView):
     column_exclude_list = ['capacity']
     column_labels = {
         'room_name': 'Tên phòng',
@@ -91,11 +97,7 @@ class RoomView(AuthenticationModelView):
     form_excluded_columns = ['rental_vouchers', 'order_vouchers', 'status', 'capacity']
 
 
-class RoomTypeView(AuthenticationModelView):
-    can_view_details = True
-    can_export = True
-    edit_modal = True
-    details_modal = True
+class RoomTypeView(CommonModelView):
     column_labels = {
         'room_type_name': 'Tên loại phòng',
         'price': 'Giá phòng(nghìn đồng)',
@@ -103,11 +105,7 @@ class RoomTypeView(AuthenticationModelView):
     form_excluded_columns = ['rooms']
 
 
-class BillView(ModelView):
-    can_view_details = True
-    can_export = True
-    edit_modal = True
-    details_modal = True
+class BillView(CommonModelView):
     can_create = False
     can_edit = False
     column_display_pk = True
@@ -118,11 +116,7 @@ class BillView(ModelView):
     }
 
 
-class SurchangeView(ModelView):
-    can_view_details = True
-    can_export = True
-    edit_modal = True
-    details_modal = True
+class SurchangeView(CommonModelView):
     column_display_pk = True
     column_labels = {
         'id': 'Mã phụ thu',
@@ -131,11 +125,7 @@ class SurchangeView(ModelView):
     form_excluded_columns = ['bills']
 
 
-class RentalVoucherView(ModelView):
-    can_view_details = True
-    can_export = True
-    edit_modal = True
-    details_modal = True
+class RentalVoucherView(CommonModelView):
     can_create = False
     can_edit = False
     column_labels = {
@@ -147,11 +137,7 @@ class RentalVoucherView(ModelView):
     }
 
 
-class OrderVoucherView(ModelView):
-    can_view_details = True
-    can_export = True
-    edit_modal = True
-    details_modal = True
+class OrderVoucherView(CommonModelView):
     can_create = False
     can_edit = False
     column_labels = {

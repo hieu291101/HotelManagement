@@ -4,14 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="18162bcb-000d-425f-8bf5-19d2a7d04bf4" name="Changes" comment="">
+    <list default="true" id="18162bcb-000d-425f-8bf5-19d2a7d04bf4" name="Changes" comment="Merge branch 'main' into feature-thanhdinh&#10;&#10;# Conflicts:&#10;#&#9;.idea/misc.xml&#10;#&#9;HotelManagement/index.py&#10;#&#9;HotelManagement/models.py&#10;#&#9;HotelManagement/templates/login.html">
+      <change afterPath="$PROJECT_DIR$/HotelManagement/templates/layout/base.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/HotelManagement/templates/layout/footer.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/HotelManagement/templates/layout/header.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/HotelManagement.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/HotelManagement.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HotelManagement/index.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/index.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HotelManagement/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HotelManagement/static/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/static/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HotelManagement/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HotelManagement/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/login.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HotelManagement/templates/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/templates/temp.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/temp.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HotelManagement/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -29,6 +34,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/HotelManagement/templates/register.html" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />

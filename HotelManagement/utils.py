@@ -26,12 +26,18 @@ def check_date(orderdate, checkindate):
     return True
 
 
-def add_customer(name, username, email, password, **kwargs):
+def add_customer(name, username, email, phone, identity, nationality,
+                 gender, address, password, **kwargs):
     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
-    user = Customer(name=name.strip(),
-                password=password,
-                username=username,
-                email=email)
+    customer = Customer(name=name.strip(),
+                        email=email,
+                        phone=phone,
+                        identity=identity,
+                        nationality=nationality,
+                        gender=gender,
+                        address=address)
+    user = User(username=username.strip(), password=password, type='customer')
 
+    db.session.add(customer)
     db.session.add(user)
     db.session.commit()

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from HotelManagement import db
 from datetime import datetime
@@ -150,7 +150,6 @@ class Surchange(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     surchange = Column(Float, default=0.25, unique=True)
-
     bills = relationship('Bill', backref='surchange', lazy=True)
 
     def __str__(self):

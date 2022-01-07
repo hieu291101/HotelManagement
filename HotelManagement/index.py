@@ -20,18 +20,17 @@ def home():
             checkoutdatetime = datetime.datetime.strptime(checkindate, "%Y-%m-%d")
             check_dates = utils.check_date(datetime.datetime.now(), checkindatetime)
         else:
-            flash('Chưa nhập đủ giá trị', 'warning')
+            flash('Chưa nhập đủ giá trị', 'danger')
             return redirect(request.url)
 
         # Kiểm tra các ràng buộc
-        if check_dates == False:
+        if not check_dates:
             flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "warning")
             return redirect(request.url)
         elif checkindatetime < datetime.datetime.now() and (checkindatetime - checkoutdatetime).days == 0:
             flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "warning")
             return redirect(request.url)
-
-        return redirect('/login-register')
+        return redirect('/user-login')
 
     return render_template('index.html')
 
@@ -43,12 +42,25 @@ def user_register():
         name = request.form.get('name')
         username = request.form.get('username')
         email = request.form.get('email')
+        phone = request.form.get('phone')
+        identity = request.form.get('identity')
+        nationality = request.form.get('nationality')
+        gender = request.form.get('gender')
+        address = request.form.get('address')
         password = request.form.get('password')
         confirmpassword = request.form.get('confirmpassword')
 
         try:
             if password.strip().__eq__(confirmpassword.strip()):
-                utils.add_customer(name=name, username=username, email=email, password=password)
+                utils.add_customer(name=name.strip(),
+                                   username=username,
+                                   email=email,
+                                   phone=phone,
+                                   identity=identity,
+                                   nationality=nationality,
+                                   gender=gender,
+                                   address=address,
+                                   password=password)
             else:
                 err_msg = 'Mat khau khong khop'
         except Exception as ex:
@@ -62,6 +74,29 @@ def user_register():
 @app.route('/login-register', methods=['get', 'post'])
 def login_register():
     return render_template('login.html')
+
+
+@app.route('/user-login', methods=['get', 'post'])
+def user_login():
+    if request.method.__eq__('POST'):
+        req = request.form
+        username = req.get('username')
+        password = req.get('password')
+
+        user = utils.check_login(username=username, password=password)
+        if user:
+            login_user(user=user)
+        else:
+            flash('Tài khoản hoặc mật khầu không khả dụng', 'warning')
+            return redirect(request.url)
+
+    return render_template('login.html')
+
+
+@app.route('/user-logout')
+def user_logout():
+    logout_user()
+    return redirect(url_for('user_login'))
 
 
 @app.route('/admin-login', methods=['post'])

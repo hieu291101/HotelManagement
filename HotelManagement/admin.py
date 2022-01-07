@@ -1,16 +1,10 @@
 from HotelManagement import admin, db
 from HotelManagement.models import User, Administrator, Customer, CustomerType, Staff, Room, RoomType, Bill, Surchange, \
-    RentalVoucher, OrderVoucher, UserRole
+    RentalVoucher, OrderVoucher
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import BaseView, expose
 from flask_login import logout_user, current_user
 from flask import redirect
-
-
-# Đã đăng nhập và có role là admin
-class AuthenticationModelView(ModelView):
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
 
 
 # Đã đăng nhập
@@ -25,8 +19,8 @@ class CommonModelView(ModelView):
     edit_modal = True
     details_modal = True
 
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.type == 'administrator'
+    # def is_accessible(self):
+    #     return current_user.is_authenticated and current_user.type == 'administrator'
 
 
 class AdminView(CommonModelView):
@@ -164,18 +158,18 @@ class StatsView(AuthenticationBaseView):
         return self.render('admin/stats.html')
 
 
-admin.add_view(AuthenticationModelView(User, db.session, name='Người dùng'))
-admin.add_view(AuthenticationModelView(Administrator, db.session, name='admin'))
-admin.add_view(AuthenticationModelView(Customer, db.session, name='Thông tin khách hàng', category='Khách hàng'))
-admin.add_view(AuthenticationModelView(CustomerType, db.session, name='Loại khách', category='Khách hàng'))
-admin.add_view(AuthenticationModelView(Staff, db.session, name='Nhân viên'))
+admin.add_view(CommonModelView(User, db.session, name='Người dùng'))
+admin.add_view(CommonModelView(Administrator, db.session, name='admin'))
+admin.add_view(CommonModelView(Customer, db.session, name='Thông tin khách hàng', category='Khách hàng'))
+admin.add_view(CommonModelView(CustomerType, db.session, name='Loại khách', category='Khách hàng'))
+admin.add_view(CommonModelView(Staff, db.session, name='Nhân viên'))
 
-admin.add_view(AuthenticationModelView(Room, db.session, name='Thông tin phòng', category='Phòng'))
-admin.add_view(AuthenticationModelView(RoomType, db.session, name='Loại phòng', category='Phòng'))
-admin.add_view(AuthenticationModelView(Bill, db.session, name='Danh sách hóa đơn', category='Hóa đơn'))
-admin.add_view(AuthenticationModelView(Surchange, db.session, name='Phụ thu', category='Hóa đơn'))
-admin.add_view(AuthenticationModelView(RentalVoucher, db.session, name='Phiếu thuê'))
-admin.add_view(AuthenticationModelView(OrderVoucher, db.session, name='Phiếu đặt'))
+admin.add_view(CommonModelView(Room, db.session, name='Thông tin phòng', category='Phòng'))
+admin.add_view(CommonModelView(RoomType, db.session, name='Loại phòng', category='Phòng'))
+admin.add_view(CommonModelView(Bill, db.session, name='Danh sách hóa đơn', category='Hóa đơn'))
+admin.add_view(CommonModelView(Surchange, db.session, name='Phụ thu', category='Hóa đơn'))
+admin.add_view(CommonModelView(RentalVoucher, db.session, name='Phiếu thuê'))
+admin.add_view(CommonModelView(OrderVoucher, db.session, name='Phiếu đặt'))
 
 admin.add_view(LogoutView(name='Đăng xuất'))
 admin.add_view(StatsView(name='Thống kê báo cáo'))

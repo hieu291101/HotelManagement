@@ -3,13 +3,6 @@ from sqlalchemy.orm import relationship, backref
 from HotelManagement import db
 from datetime import datetime
 from flask_login import UserMixin
-from enum import Enum as UserEnum
-
-
-class UserRole(UserEnum):
-    ADMIN = 1
-    STAFF = 2
-    CUSTOMER = 3
 
 
 class User(db.Model, UserMixin):
@@ -20,14 +13,12 @@ class User(db.Model, UserMixin):
     password = Column(String(50), nullable=False)
     login_status = Column(Boolean, default=True)
     register_date = Column(DateTime, default=datetime.now())
-
     avatar = Column(String(100))
-    # type = Column(String(20))
-    user_role = Column(Enum(UserRole), default=UserRole.CUSTOMER)
+    type = Column(String(20))
 
-    # __mapper_args__ = {
-    #     'polymorphic_on': type
-    # }
+    __mapper_args__ = {
+        'polymorphic_on': type
+    }
 
 
 class Customer(User):

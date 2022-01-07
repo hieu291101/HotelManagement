@@ -1,5 +1,4 @@
 import datetime
-
 from HotelManagement import app, login
 from HotelManagement.admin import *
 import utils
@@ -37,7 +36,30 @@ def home():
     return render_template('index.html')
 
 
-@app.route('/login-register')
+@app.route('/user-register', methods=['get', 'post'])
+def user_register():
+    err_msg = ''
+    if request.method.__eq__("POST"):
+        name = request.form.get('name')
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        confirmpassword = request.form.get('confirmpassword')
+
+        try:
+            if password.strip().__eq__(confirmpassword.strip()):
+                utils.add_customer(name=name, username=username, email=email, password=password)
+            else:
+                err_msg = 'Mat khau khong khop'
+        except Exception as ex:
+            err_msg = 'He thong dang co loi !!'
+        else:
+            return redirect(url_for('login_register'))
+
+    return render_template('register.html')
+
+
+@app.route('/login-register', methods=['get', 'post'])
 def login_register():
     return render_template('login.html')
 

@@ -32,10 +32,10 @@ def home():
             flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "warning")
             return redirect(request.url)
 
-
         return redirect('/user-login')
 
     return render_template('index.html')
+
 
 @app.route('/user-login', methods=['get', 'post'])
 def user_login():
@@ -53,10 +53,12 @@ def user_login():
 
     return render_template('login.html')
 
+
 @app.route('/user-logout')
 def user_logout():
     logout_user()
     return redirect(url_for('user_login'))
+
 
 @app.route('/admin-login', methods=['post'])
 def admin_login():
@@ -70,9 +72,11 @@ def admin_login():
 
     return redirect('/admin')
 
+
 @login.user_loader
 def load_user(user_id):
     return utils.get_user_by_id(user_id=user_id)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

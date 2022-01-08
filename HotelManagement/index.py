@@ -2,6 +2,7 @@ import datetime
 from HotelManagement import app, login
 from HotelManagement.admin import *
 import utils
+import cloudinary.uploader
 from flask_login import login_user
 from flask import render_template, request, redirect, flash, url_for
 
@@ -48,9 +49,15 @@ def user_register():
         address = request.form.get('address')
         password = request.form.get('password')
         confirmpassword = request.form.get('confirmpassword')
+        avatar_path = None
 
         try:
             if password.strip().__eq__(confirmpassword.strip()):
+                avatar = request.files.get('avatar')
+                if avatar:
+                    respose = cloudinary.uploader.upload(avatar)
+                    avatar_path = respose['secure_url']
+
                 utils.add_customer(name=name,
                                    username=username,
                                    email=email,
@@ -59,7 +66,9 @@ def user_register():
                                    nationality=nationality,
                                    gender=gender,
                                    address=address,
-                                   password=password)
+                                   password=password,
+                                   avatar=avatar_path)
+                flash('Đăng ký thành công', 'success')
                 return redirect(url_for('user_login'))
             else:
                 flash('Mật khẩu không khớp', 'warning')

@@ -20,10 +20,6 @@ class User(db.Model, UserMixin):
         'polymorphic_on': type
     }
 
-    # def __int__(self, username, password):
-    #     self.username = username
-    #     self.password = password
-
 
 class Customer(User):
     __tablename__ = 'customer'
@@ -45,23 +41,6 @@ class Customer(User):
     __mapper_args__ = {
         'polymorphic_identity': 'customer'
     }
-
-    # def __init__(self, name, gender, email, id_number, nationality, address, phone_number,
-    #              username, password):
-    #     super(type, User)
-    #     super().username = username
-    #     super().password = password
-    #     # super().login_status = login_status
-    #     # # super().register_date = register_date
-    #     # super().avatar = avatar
-    #     # super().type = type
-    #     self.name = name
-    #     self.gender = gender
-    #     self.email = email
-    #     self.id_number = id_number
-    #     self.nationality = nationality
-    #     self.address = address
-    #     self.phone_number = phone_number
 
     def __str__(self):
         return self.id
@@ -88,6 +67,7 @@ class Staff(User):
     email = Column(String(30), nullable=False)
     id_number = Column(String(20), nullable=False)
     address = Column(String(60), nullable=False)
+
     location_id = Column(Integer, ForeignKey('location.id'), nullable=False)
     phone_number = Column(String(20), nullable=False)
     experience = Column(Integer, nullable=False)  # số tháng làm việc

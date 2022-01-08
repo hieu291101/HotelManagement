@@ -13,7 +13,7 @@
           alt="Sample image">
       </div>
       <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-          <form method="post" action="{{ url_for('user_register') }}">
+          <form method="post" action="{{ url_for('user_register') }}" enctype="multipart/form-data">
               <h2 class="text-center">ĐĂNG KÝ </h2>
               <br/>
               <!--name and username-->
@@ -40,17 +40,17 @@
 				</div>
               </div>
 
-              <!--Email and Phone-->
+              <!--Identity and Phone-->
               <div class="row">
-                <!--Email-->
+                <!--Identity-->
                 <div class="form-group col-6">
-                  <label for="email">Email:</label>
+                  <label for="identity">Chứng minh thư:</label>
                   <input required
-                         type="email"
+                         type="text"
                          class="form-control"
-                         placeholder="Nhập email..."
-                         id="email"
-                         name="email"/>
+                         placeholder="Nhập số chứng minh..."
+                         id="identity"
+                         name="identity"/>
                 </div>
                 <!--Phone number-->
                 <div class="form-group col-6">
@@ -64,18 +64,8 @@
                 </div>
               </div>
 
-              <!--Identity, Nationality, Gender-->
+              <!--Nationality, Gender, Avatar-->
               <div class="row">
-                <!--Identity-->
-                <div class="form-group col-6">
-                  <label for="identity">Chứng minh thư:</label>
-                  <input required
-                         type="text"
-                         class="form-control"
-                         placeholder="Nhập số chứng minh..."
-                         id="identity"
-                         name="identity"/>
-                </div>
                 <!--Nationality-->
                 <div class="form-group col-3">
                     <label for="nationality">Quốc tịch</label>
@@ -93,7 +83,27 @@
                       <option>Khác</option>
                     </select>
                 </div>
+                <!--Avatar-->
+                <div class="form-group col-6">
+                  <label for="avatar">Ảnh đại diện</label>
+                  <input type="file"
+                         class="form-control"
+                         placeholder="Chọn ảnh"
+                         id="avatar"
+                         name="avatar"/>
+                </div>
               </div>
+
+              <!--Email-->
+              <div class="form-group">
+              <label for="email">Email:</label>
+              <input required
+                     type="email"
+                     class="form-control"
+                     placeholder="Nhập email..."
+                     id="email"
+                     name="email"/>
+            </div>
 
               <!--Address-->
               <div class="form-group">

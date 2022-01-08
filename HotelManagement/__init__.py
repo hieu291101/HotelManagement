@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
 from flask_babelex import Babel
 from flask_login import LoginManager
+import cloudinary
 
 app = Flask(__name__)
 app.secret_key = "819048&(*%^*(*&(@9789&^&()(!@#$"
@@ -16,6 +17,12 @@ admin = Admin(app=app, name='Hotel App', template_mode='bootstrap4')
 login = LoginManager(app=app)
 
 babel = Babel(app=app)
+
+cloudinary.config(
+    cloud_name="dinhnguyenthanh",
+    api_key="695521882677629",
+    api_secret="TcLlKGeCuAhiGMqa_DzajlI_z8U"
+)
 
 
 @babel.localeselector

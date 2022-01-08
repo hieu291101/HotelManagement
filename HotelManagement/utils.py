@@ -28,13 +28,12 @@ def check_date(orderdate, checkindate):
 
 
 def add_customer(name, username, email, phone, identity, nationality,
-                 gender, address, password):
+                 gender, address, password, **kwargs):
     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
     name = name.strip()
     username = username.strip()
     customer_type_id = '1' if nationality == "Việt Nam" else '2'
     location_id = '1'
-    print('ss')
     customer = Customer(name=name,
                         gender=gender,
                         email=email,
@@ -45,8 +44,7 @@ def add_customer(name, username, email, phone, identity, nationality,
                         username=username,
                         password=password,
                         location_id=location_id,
-                        customer_type_id=customer_type_id)
-    print('ss')
+                        customer_type_id=customer_type_id,
+                        avatar=kwargs.get('avatar'))
     db.session.add(customer)
-    print('ss')
     db.session.commit()

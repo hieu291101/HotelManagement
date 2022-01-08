@@ -37,8 +37,7 @@ def home():
 
 @app.route('/user-register', methods=['get', 'post'])
 def user_register():
-    err_msg = ''
-    if request.method.__eq__("POST"):
+    if request.method.__eq__('POST'):
         name = request.form.get('name')
         username = request.form.get('username')
         email = request.form.get('email')
@@ -52,7 +51,7 @@ def user_register():
 
         try:
             if password.strip().__eq__(confirmpassword.strip()):
-                utils.add_customer(name=name.strip(),
+                utils.add_customer(name=name,
                                    username=username,
                                    email=email,
                                    phone=phone,
@@ -61,13 +60,11 @@ def user_register():
                                    gender=gender,
                                    address=address,
                                    password=password)
+                return redirect(url_for('user_login'))
             else:
-                err_msg = 'Mat khau khong khop'
-        except Exception as ex:
-            err_msg = 'He thong dang co loi !!'
-        else:
-            return redirect(url_for('login_register'))
-
+                flash('Mật khẩu không khớp', 'warning')
+        except:
+            flash('Hệ thống đang có lỗi !!', 'warning')
     return render_template('register.html')
 
 

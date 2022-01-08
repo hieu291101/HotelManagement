@@ -1,7 +1,8 @@
 import datetime
 import hashlib
 
-from HotelManagement.models import User, db, Customer
+from HotelManagement.models import User, Customer
+from HotelManagement import db
 
 
 def get_user_by_id(user_id):
@@ -27,17 +28,25 @@ def check_date(orderdate, checkindate):
 
 
 def add_customer(name, username, email, phone, identity, nationality,
-                 gender, address, password, **kwargs):
+                 gender, address, password):
     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
-    customer = Customer(name=name.strip(),
-                        email=email,
-                        phone=phone,
-                        identity=identity,
-                        nationality=nationality,
+    name = name.strip()
+    username = username.strip()
+    customer_type_id = '1' if nationality == "Việt Nam" else '2'
+    location_id = '1'
+    print('ss')
+    customer = Customer(name=name,
                         gender=gender,
-                        address=address)
-    user = User(username=username.strip(), password=password, type='customer')
-
+                        email=email,
+                        id_number=identity,
+                        nationality=nationality,
+                        address=address,
+                        phone_number=phone,
+                        username=username,
+                        password=password,
+                        location_id=location_id,
+                        customer_type_id=customer_type_id)
+    print('ss')
     db.session.add(customer)
-    db.session.add(user)
+    print('ss')
     db.session.commit()

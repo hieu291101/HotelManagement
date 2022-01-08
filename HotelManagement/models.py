@@ -20,18 +20,22 @@ class User(db.Model, UserMixin):
         'polymorphic_on': type
     }
 
+    # def __int__(self, username, password):
+    #     self.username = username
+    #     self.password = password
+
 
 class Customer(User):
     __tablename__ = 'customer'
 
     id = Column(Integer, ForeignKey('user.id'), primary_key=True)
-    name = Column(String(30), nullable=False)
-    gender = Column(String(5), nullable=False)
-    email = Column(String(10), nullable=False)
-    id_number = Column(String(10), nullable=False)  # Căn cước công dân
+    name = Column(String(50), nullable=False)
+    gender = Column(String(10), nullable=False)
+    email = Column(String(30), nullable=False)
+    id_number = Column(String(20), nullable=False)  # Căn cước công dân
     nationality = Column(String(20), nullable=False)
     address = Column(String(60), nullable=False)
-    phone_number = Column(String(10), nullable=False)
+    phone_number = Column(String(20), nullable=False)
 
     location_id = Column(Integer, ForeignKey('location.id'), nullable=False)
     customer_type_id = Column(Integer, ForeignKey('customer_type.id'), nullable=False)
@@ -41,6 +45,23 @@ class Customer(User):
     __mapper_args__ = {
         'polymorphic_identity': 'customer'
     }
+
+    # def __init__(self, name, gender, email, id_number, nationality, address, phone_number,
+    #              username, password):
+    #     super(type, User)
+    #     super().username = username
+    #     super().password = password
+    #     # super().login_status = login_status
+    #     # # super().register_date = register_date
+    #     # super().avatar = avatar
+    #     # super().type = type
+    #     self.name = name
+    #     self.gender = gender
+    #     self.email = email
+    #     self.id_number = id_number
+    #     self.nationality = nationality
+    #     self.address = address
+    #     self.phone_number = phone_number
 
     def __str__(self):
         return self.id
@@ -63,12 +84,12 @@ class Staff(User):
 
     id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     name = Column(String(30), nullable=False)
-    gender = Column(String(5), nullable=False)
-    email = Column(String(10), nullable=False)
-    id_number = Column(String(10), nullable=False)
+    gender = Column(String(10), nullable=False)
+    email = Column(String(30), nullable=False)
+    id_number = Column(String(20), nullable=False)
     address = Column(String(60), nullable=False)
     location_id = Column(Integer, ForeignKey('location.id'), nullable=False)
-    phone_number = Column(String(10), nullable=False)
+    phone_number = Column(String(20), nullable=False)
     experience = Column(Integer, nullable=False)  # số tháng làm việc
 
     __mapper_args__ = {
@@ -80,8 +101,8 @@ class Location(db.Model):
     __tablename__ = 'location'
 
     id = Column(Integer, primary_key=True)
-    city = Column(String(20), nullable=False)
-    country = Column(String(20), nullable=False)
+    city = Column(String(30), nullable=False)
+    country = Column(String(30), nullable=False)
 
     staff = relationship("Staff", backref='location', lazy=True)
     customer = relationship("Customer", backref='location', lazy=True)
@@ -102,10 +123,10 @@ class Room(db.Model):
     __tablename__ = 'room'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    room_name = Column(String(10), nullable=False)
+    room_name = Column(String(30), nullable=False)
     status = Column(Boolean, default=True)
     capacity = Column(Integer, nullable=False, default=0)  # số người trên phòng
-    description = Column(String(60))
+    description = Column(String(255))
 
     room_type_id = Column(Integer, ForeignKey('room_type.id'), nullable=False)
     rental_vouchers = relationship('RentalVoucher', backref='room', lazy=True)
@@ -119,7 +140,7 @@ class RoomType(db.Model):
     __tablename__ = 'room_type'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    room_type_name = Column(String(20), nullable=False)
+    room_type_name = Column(String(50), nullable=False)
     maximum_customer = Column(Integer, nullable=False)
     price = Column(Integer, nullable=False)
 

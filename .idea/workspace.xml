@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="18162bcb-000d-425f-8bf5-19d2a7d04bf4" name="Changes" comment="Merge branch 'main' into feature-thanhdinh&#10;&#10;# Conflicts:&#10;#&#9;.idea/misc.xml&#10;#&#9;HotelManagement/index.py&#10;#&#9;HotelManagement/models.py&#10;#&#9;HotelManagement/templates/login.html">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HotelManagement/templates/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/register.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,7 +41,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
   </component>
-  <component name="RunManager" selected="Python.models">
+  <component name="RunManager" selected="Python.index">
     <configuration name="index" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="HotelManagement" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -87,8 +86,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.models" />
         <item itemvalue="Python.index" />
+        <item itemvalue="Python.models" />
       </list>
     </recent_temporary>
   </component>

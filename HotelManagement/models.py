@@ -51,7 +51,7 @@ class CustomerType(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     customer_type = Column(String(20), default='Nội địa')
-    customer_index = Column(Integer, nullable=False, default=1)
+    customer_index = Column(Float, nullable=False, default=1)
     customers = relationship("Customer", backref='customer_type', lazy=True)
 
     def __str__(self):

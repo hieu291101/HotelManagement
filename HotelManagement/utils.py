@@ -48,3 +48,5 @@ def add_customer(name, username, email, phone, identity, nationality,
                         avatar=kwargs.get('avatar'))
     db.session.add(customer)
     db.session.commit()
+
+# comment

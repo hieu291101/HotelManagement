@@ -2,6 +2,160 @@
 
 {% block body %}
 
-<h1 class="text-center">Thống kê báo cáo</h1>
+<h1 class="text-center">Thống kê báo cáo doanh thu theo tháng</h1>
+<div class="row">
+    <div class="table table-striped col-md-5 col-xs-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Tháng</th>
+                    <th scope="col">Loại phòng</th>
+                    <th scope="col">Doanh thu</th>
+                    <th scope="col">Lượt thuê</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in month_stats %}
+                <tr>
+                    <th scope="col">{{ s[3] }}</th>
+                    <td>{{ s[0] }}</td>
+                    <td>{{ "{:,.0f}".format(s[1]) }} VND</td>
+                    <td>{{ s[2] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-7 col-sx-12">
+        <canvas id="myChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let labels = []
+    let data = []
+    let colors = []
+    let borderColors = []
+    let r, g, b;
+
+    {% for s in month_stats %}
+    {% if s[1] %}
+        labels.push('{{ s[3] }}')
+        data.push({{ s[1] }})
+
+        r = Math.random()*255
+        g = Math.random()*255
+        b = Math.random()*255
+
+        colors.push('rgba(${r}, ${g}, ${b}, 0,2)')
+        borderColors.push('rgba(${r}, ${g}, ${b}, 1)')
+    {% endif %}
+    {% endfor %}
+
+    window.onload = function(){
+        const ctx = document.getElementById('myChart').getContext('2d')
+
+        loadChart(ctx, labels, data, 'bar', colors, borderColors)
+    }
+
+function loadChart(ctx, labels, data, type, colors, borderColors){
+    const myChart = new Chart(ctx, {
+        type: type,
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Thống kê doanh thu',
+                data: data,
+                backgroundColor: colors,
+                borderColor: borderColors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+</script>
+<div class="row">
+    <div class="table table-striped col-md-5 col-xs-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Tháng</th>
+                    <th scope="col">Phòng</th>
+                    <th scope="col">Số ngày thuê</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in count_stats %}
+                <tr>
+                    <th scope="col">{{ t[0] }}</th>
+                    <td>{{ t[1] }}</td>
+                    <td>{{ t[2] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-7 col-xs-12">
+        <canvas id="MyChartId"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let labels = []
+    let data = []
+    let colors = []
+    let borderColors = []
+    let r, g, b;
+
+    {% for t in count_stats %}
+        labels.push('{{ t[1] }}')
+        data.push({{ t[2] }})
+
+        r = Math.random()*255
+        g = Math.random()*255
+        b = Math.random()*255
+
+        colors.push('rgba(${r}, ${g}, ${b}, 0,2)')
+        borderColors.push('rgba(${r}, ${g}, ${b}, 1)')
+    {% endfor %}
+
+    window.onload = function(){
+        const ctx = document.getElementById('MyChartId').getContext('2d')
+
+        loadMyChart(ctx, labels, data, 'bar', colors, borderColors)
+    }
+
+function loadMyChart(ctx, labels, data, type, colors, borderColors){
+    const myChart = new Chart(ctx, {
+        type: type,
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Thống kê mật độ sử dụng phòng',
+                data: data,
+                backgroundColor: colors,
+                borderColor: borderColors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+</script>
 
 {% endblock %}

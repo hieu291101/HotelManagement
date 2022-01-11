@@ -21,15 +21,15 @@ def home():
             checkoutdatetime = datetime.datetime.strptime(checkindate, "%Y-%m-%d")
             check_dates = utils.check_date(datetime.datetime.now(), checkindatetime)
         else:
-            flash('Chưa nhập đủ giá trị', 'danger')
+            flash('Chưa nhập đủ giá trị', category='danger')
             return redirect(request.url)
 
         # Kiểm tra các ràng buộc
         if not check_dates:
-            flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "warning")
+            flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', category="error")
             return redirect(request.url)
         elif checkindatetime < datetime.datetime.now() and (checkindatetime - checkoutdatetime).days == 0:
-            flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "warning")
+            flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', category="error")
             return redirect(request.url)
         return redirect('/user-login')
 
@@ -50,7 +50,6 @@ def user_register():
         password = request.form.get('password')
         confirmpassword = request.form.get('confirmpassword')
         avatar_path = None
-
         try:
             if password.strip().__eq__(confirmpassword.strip()):
                 avatar = request.files.get('avatar')
@@ -71,9 +70,9 @@ def user_register():
                 flash('Đăng ký thành công', 'success')
                 return redirect(url_for('user_login'))
             else:
-                flash('Mật khẩu không khớp', 'warning')
+                flash('Mật khẩu không khớp', category="error")
         except:
-            flash('Hệ thống đang có lỗi !!', 'warning')
+            flash('Hệ thống đang có lỗi !!', category="error")
     return render_template('register.html')
 
 
@@ -93,7 +92,7 @@ def user_login():
         if user:
             login_user(user=user)
         else:
-            flash('Tài khoản hoặc mật khầu không khả dụng', 'warning')
+            flash('Tài khoản hoặc mật khầu không khả dụng', category="error")
             return redirect(request.url)
 
     return render_template('login.html')

@@ -1,4 +1,5 @@
 <!-- Navigation -->
+{% if current_user.type != 'staff' %}
 <nav id="nav" class="navbar navbar-expand-md sticky-top">
     <a href="{{ url_for('home') }}" class="navbar-brand">BookingHotel.com</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
@@ -14,7 +15,7 @@
             </li>
             {% if current_user.is_authenticated %}
                 <li class="nav-item nav-item-login">
-                <a class="nav-link" href="{{ url_for('user_login') }}">
+                <a class="nav-link" href="{{ url_for('user_pagination') }}">
                     {% if current_user.avatar %}
                         <img src="{{ current_user.avatar }}" width="30px" height="30px" alt="{{ current_user.name }}" class="rounded-circle"/>
                     {% else %}
@@ -35,7 +36,9 @@
             {% endif %}
         </ul>
     </div>
+
 </nav>
+{% endif %}
 
 <div class="container alert-box">
     {% with messages = get_flashed_messages(with_categories=true) %}

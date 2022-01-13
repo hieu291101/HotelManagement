@@ -4,6 +4,7 @@ from flask_admin import Admin
 from flask_babelex import Babel
 from flask_login import LoginManager
 import cloudinary
+from sqlalchemy import create_engine
 
 app = Flask(__name__)
 app.secret_key = "819048&(*%^*(*&(@9789&^&()(!@#$"

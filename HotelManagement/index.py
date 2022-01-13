@@ -77,13 +77,11 @@ def user_register():
     return render_template('register.html')
 
 
-@app.route('/login-register', methods=['get', 'post'])
-def login_register():
-    return render_template('login.html')
-
-
 @app.route('/user-login', methods=['get', 'post'])
 def user_login():
+    if current_user.is_authenticated:
+        return redirect('/user-pagination')
+
     if request.method.__eq__('POST'):
         req = request.form
         username = req.get('username')
@@ -92,11 +90,13 @@ def user_login():
         user = utils.check_login(username=username, password=password)
         if user:
             login_user(user=user)
+            return redirect('/user-pagination')
         else:
             flash('Tài khoản hoặc mật khầu không khả dụng', 'warning')
             return redirect(request.url)
 
     return render_template('login.html')
+
 
 
 @app.route('/user-logout')
@@ -121,6 +121,26 @@ def admin_login():
 @login.user_loader
 def load_user(user_id):
     return utils.get_user_by_id(user_id=user_id)
+
+@app.route('/user-pagination')
+def user_pagination():
+
+    if current_user.type == 'administrator':
+        return redirect('admin')
+    elif current_user.type == 'staff':
+        return redirect('/staff-page')
+    else:
+        return redirect('/')
+
+@app.route('/staff-page')
+def staff_page():
+    if not current_user.is_authenticated and current_user.type=='staff':
+        return redirect('/user-login')
+
+    room_name = request.args.get('keyword')
+    return render_template('staff.html',
+                           rental_voucher=utils.load_rental_voucher(), room_left=utils.load_room_left(),
+                           rental_voucher_by=utils.load_rental_voucher_by(room_name))
 
 
 if __name__ == "__main__":

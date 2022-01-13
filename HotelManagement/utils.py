@@ -1,7 +1,9 @@
 import datetime
 import hashlib
 
-from HotelManagement.models import User, Customer
+from sqlalchemy import text
+
+from HotelManagement.models import User, Customer, RentalVoucher, OrderVoucher, Room
 from HotelManagement import db
 
 
@@ -48,3 +50,27 @@ def add_customer(name, username, email, phone, identity, nationality,
                         avatar=kwargs.get('avatar'))
     db.session.add(customer)
     db.session.commit()
+
+def load_rental_voucher():
+    return db.session.query(Room.room_name, Customer.name, RentalVoucher.check_in_date, RentalVoucher.check_out_date, RentalVoucher.bill_id)\
+                     .join(Room, RentalVoucher.room_id.__eq__(Room.id))\
+                     .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id)).all()
+# def load_income():
+#     return  db.session.query(Room.room_name, Customer.name, RentalVoucher.check_in_date, RentalVoucher.check_out_date, RentalVoucher.bill_id,
+#                                    Bill.unit_price, Surchange.surchange)\
+#                      .join(Room, RentalVoucher.room_id.__eq__(Room.id))\
+#                      .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id)).all()
+
+def load_rental_voucher_by(customer_name=None):
+    rental_voucher = db.session.query(Room.room_name, Customer.id_number, Customer.name, RentalVoucher.check_in_date, RentalVoucher.check_out_date, RentalVoucher.bill_id)\
+                     .join(Room, RentalVoucher.room_id.__eq__(Room.id))\
+                     .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id))
+    if customer_name:
+        rental_voucher = rental_voucher.filter(Customer.name.contains(customer_name))
+
+    return rental_voucher
+
+def load_room_left():
+   return db.engine.execute(text("SELECT id FROM room WHERE id not in (SELECT room_id FROM rental_voucher)")).all()
+
+

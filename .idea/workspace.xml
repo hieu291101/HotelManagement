@@ -5,8 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="18162bcb-000d-425f-8bf5-19d2a7d04bf4" name="Changes" comment="Merge branch 'main' into feature-thanhdinh&#10;&#10;# Conflicts:&#10;#&#9;.idea/misc.xml&#10;#&#9;HotelManagement/index.py&#10;#&#9;HotelManagement/models.py&#10;#&#9;HotelManagement/templates/login.html">
+      <change afterPath="$PROJECT_DIR$/HotelManagement/static/css/app.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/HotelManagement/static/css/bold.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/HotelManagement/static/css/bootstrap-icons.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/HotelManagement/static/css/perfect-scrollbar.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/HotelManagement/static/css/staff.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/HotelManagement/templates/staff.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/HotelManagement.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/HotelManagement.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/templates/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HotelManagement/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HotelManagement/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HotelManagement/index.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/index.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HotelManagement/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HotelManagement/templates/layout/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/layout/header.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HotelManagement/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +52,12 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/HotelManagement/static/css" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\PyCharmProject\HotelManagement\HotelManagement\static\css" />
+    </key>
   </component>
   <component name="RunManager" selected="Python.index">
     <configuration name="index" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">

@@ -25,7 +25,7 @@ def home():
             return redirect(request.url)
 
         # Kiểm tra các ràng buộc
-        if check_dates == False:
+        if not check_dates:
             flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "warning")
             return redirect(request.url)
         elif checkindatetime < datetime.datetime.now() and (checkindatetime - checkoutdatetime).days == 0:

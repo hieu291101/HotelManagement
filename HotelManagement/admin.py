@@ -1,4 +1,4 @@
-from HotelManagement import admin, db, utils
+from HotelManagement import admin, db
 from HotelManagement.models import Administrator, Customer, CustomerType, Staff, Room, RoomType, Bill, Surchange, \
     RentalVoucher, OrderVoucher
 from flask_admin.contrib.sqla import ModelView
@@ -6,6 +6,7 @@ from flask_admin import BaseView, expose, AdminIndexView
 from flask_login import logout_user, current_user
 from flask import redirect, request
 from datetime import datetime
+import utils
 
 
 class CommonModelView(ModelView):
@@ -155,12 +156,17 @@ class LogOutView(AuthenticatedBaseView):
 class StatsView(BaseView):
     @expose('/')
     def index(self):
-        # kw = request.args.get('kw')
-        # year = request.args.get('year', datetime.now().year)
+        # from_date = request.args.get('from_date')
+        # to_date = request.args.get('to_date')
+        year = request.args.get('year', datetime.now().year)
         # month = request.args.get('month', datetime.now().month)
+
         return self.render('admin/stats.html',
-                           month_stats=utils.month_stats(),
-                           count_stats=utils.count_stats())
+                           stats=utils.month_stats(),
+                           count=utils.count_stats(year=year))
+
+    # def is_accessible(self):
+    #     return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
 
 
 admin.add_view(AdminView(Administrator, db.session, name="Nhà quản trị"))

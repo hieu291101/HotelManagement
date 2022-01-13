@@ -158,7 +158,7 @@ class RentalVoucher(db.Model):
     customer_id = Column(Integer, ForeignKey('customer.id'), primary_key=True)
     check_in_date = Column(DateTime, default=datetime.now())
     check_out_date = Column(DateTime, default=datetime.now())
-    bill_id = Column(Integer, ForeignKey('bill.id'), nullable=False)
+    bill_id = Column(Integer, ForeignKey('bill.id'), primary_key=True)
 
 
 class OrderVoucher(db.Model):

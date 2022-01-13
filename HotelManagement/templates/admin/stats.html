@@ -1,65 +1,106 @@
 {% extends 'admin/base.html' %}
-
 {% block body %}
-
 <h1 class="text-center">Thống kê báo cáo doanh thu theo tháng</h1>
-<div class="row">
+<select class="form-select" aria-label="Default select example">
+  <option selected>Open this select menu</option>
+  <option value="1">One</option>
+  <option value="2">Two</option>
+</select>
+<div id="tab1" class="row">
     <div class="table table-striped col-md-5 col-xs-12">
         <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Tháng</th>
-                    <th scope="col">Loại phòng</th>
-                    <th scope="col">Doanh thu</th>
-                    <th scope="col">Lượt thuê</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for s in month_stats %}
-                <tr>
-                    <th scope="col">{{ s[3] }}</th>
-                    <td>{{ s[0] }}</td>
-                    <td>{{ "{:,.0f}".format(s[1]) }} VND</td>
-                    <td>{{ s[2] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
+            <tr>
+                <th scope="col">Tháng</th>
+                <th scope="col">Loại phòng</th>
+                <th scope="col">Doanh thu</th>
+                <th scope="col">Lượt thuê</th>
+            </tr>
+            {% for s in stats %}
+            <tr>
+                <td>{{ s[0] }}</td>
+                <td>{{ s[1] }}</td>
+                <td>
+                    {% if s[2] %}
+                    {{ "{:,.0f}".format(s[2]) }} VND
+                    {% else %}
+                    0 VND
+                    {% endif %}
+                </td>
+                <td>{{ s[3] }}</td>
+            </tr>
+            {% endfor %}
         </table>
     </div>
     <div class="col-md-7 col-sx-12">
-        <canvas id="myChart"></canvas>
+        <canvas id="MyMonthChart"></canvas>
+    </div>
+</div>
+
+<div id="tab2" class="row">
+    <div class="table table-striped col-md-5 col-xs-12">
+        <table class="table">
+            <tr>
+                <th scope="col">Tháng</th>
+                <th scope="col">Phòng</th>
+                <th scope="col">Số ngày thuê</th>
+            </tr>
+            {% for i in count %}
+            <tr>
+                <td>{{ i[0] }}</td>
+                <td>{{ i[1] }}</td>
+                <td>{{ i[2] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="col-md-7 col-xs-12">
+        <canvas id="MyCountChart"></canvas>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    let labels = []
-    let data = []
-    let colors = []
-    let borderColors = []
+    let labels = [], labels2 = []
+    let data = [], data2 = []
+    let colors = [], colors2 = []
+    let borderColors = [], borderColors2 = []
     let r, g, b;
 
-    {% for s in month_stats %}
-    {% if s[1] %}
-        labels.push('{{ s[3] }}')
-        data.push({{ s[1] }})
+    {% for s in stats %}
+    {% if s[2] %}
+        labels.push('Tháng {{ s[0] }}')
+        data.push({{ s[2] }})
 
-        r = Math.random()*255
-        g = Math.random()*255
-        b = Math.random()*255
+        r = parseInt(Math.random() * 255)
+        g = parseInt(Math.random() * 255)
+        b = parseInt(Math.random() * 255)
 
-        colors.push('rgba(${r}, ${g}, ${b}, 0,2)')
-        borderColors.push('rgba(${r}, ${g}, ${b}, 1)')
-    {% endif %}
+        colors.push(`rgba(${r}, ${g}, ${b}, 0.2)`)
+        borderColors.push(`rgba(${r}, ${g}, ${b}, 1)`)
+    {% endif%}
     {% endfor %}
 
-    window.onload = function(){
-        const ctx = document.getElementById('myChart').getContext('2d')
+    {% for i in count %}
+        labels2.push('Tháng{{ i[0] }}')
+        data2.push('{{ i[2] }}')
+
+        r = parseInt(Math.random() * 255)
+        g = parseInt(Math.random() * 255)
+        b = parseInt(Math.random() * 255)
+
+        colors2.push(`rgba(${r}, ${g}, ${b}, 0.2)`)
+        borderColors2.push(`rgba(${r}, ${g}, ${b}, 1)`)
+    {% endfor %}
+
+    window.onload = function() {
+        const ctx = document.getElementById('MyMonthChart').getContext('2d');
+        const ctx2 = document.getElementById('MyCountChart').getContext('2d');
 
         loadChart(ctx, labels, data, 'bar', colors, borderColors)
+        loadChart2(ctx2, labels2, data2, 'doughnut', colors2, borderColors2)
     }
 
-function loadChart(ctx, labels, data, type, colors, borderColors){
+function loadChart(ctx, labels, data, type, colors, borderColors) {
     const myChart = new Chart(ctx, {
         type: type,
         data: {
@@ -81,69 +122,17 @@ function loadChart(ctx, labels, data, type, colors, borderColors){
         }
     });
 }
-</script>
-<div class="row">
-    <div class="table table-striped col-md-5 col-xs-12">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Tháng</th>
-                    <th scope="col">Phòng</th>
-                    <th scope="col">Số ngày thuê</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for t in count_stats %}
-                <tr>
-                    <th scope="col">{{ t[0] }}</th>
-                    <td>{{ t[1] }}</td>
-                    <td>{{ t[2] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="col-md-7 col-xs-12">
-        <canvas id="MyChartId"></canvas>
-    </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    let labels = []
-    let data = []
-    let colors = []
-    let borderColors = []
-    let r, g, b;
-
-    {% for t in count_stats %}
-        labels.push('{{ t[1] }}')
-        data.push({{ t[2] }})
-
-        r = Math.random()*255
-        g = Math.random()*255
-        b = Math.random()*255
-
-        colors.push('rgba(${r}, ${g}, ${b}, 0,2)')
-        borderColors.push('rgba(${r}, ${g}, ${b}, 1)')
-    {% endfor %}
-
-    window.onload = function(){
-        const ctx = document.getElementById('MyChartId').getContext('2d')
-
-        loadMyChart(ctx, labels, data, 'bar', colors, borderColors)
-    }
-
-function loadMyChart(ctx, labels, data, type, colors, borderColors){
-    const myChart = new Chart(ctx, {
+function loadChart2(ctx2, labels2, data2, type, colors2, borderColors2) {
+    const myChart = new Chart(ctx2, {
         type: type,
         data: {
-            labels: labels,
+            labels: labels2,
             datasets: [{
                 label: 'Thống kê mật độ sử dụng phòng',
-                data: data,
-                backgroundColor: colors,
-                borderColor: borderColors,
+                data: data2,
+                backgroundColor: colors2,
+                borderColor: borderColors2,
                 borderWidth: 1
             }]
         },
@@ -156,6 +145,7 @@ function loadMyChart(ctx, labels, data, type, colors, borderColors){
         }
     });
 }
+
 </script>
-<script>ádsdfdsfsdfffsdfsdf</script>
+
 {% endblock %}

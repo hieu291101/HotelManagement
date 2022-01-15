@@ -1,5 +1,5 @@
 from HotelManagement import admin, db
-from HotelManagement.models import Administrator, Customer, CustomerType, Staff, Room, RoomType, Bill, Surchange, \
+from HotelManagement.models import User, Administrator, Customer, CustomerType, Staff, Room, RoomType, Bill, Surchange, \
     RentalVoucher, OrderVoucher
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import BaseView, expose, AdminIndexView
@@ -9,14 +9,20 @@ from datetime import datetime
 import utils
 
 
+# Đã đăng nhập
+class AuthenticationBaseView(BaseView):
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+
 class CommonModelView(ModelView):
     can_view_details = True
     can_export = True
     edit_modal = True
     details_modal = True
 
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.type == 'administrator'
+    # def is_accessible(self):
+    #     return current_user.is_authenticated and current_user.type == 'administrator'
 
 
 class AdminView(CommonModelView):
@@ -145,7 +151,7 @@ class AuthenticatedBaseView(BaseView):
         return current_user.is_authenticated and current_user.type == 'administrator'
 
 
-class LogOutView(AuthenticatedBaseView):
+class LogoutView(AuthenticatedBaseView):
     @expose('/')
     def index(self):
         logout_user()
@@ -156,31 +162,36 @@ class LogOutView(AuthenticatedBaseView):
 class StatsView(BaseView):
     @expose('/')
     def index(self):
-        # from_date = request.args.get('from_date')
-        # to_date = request.args.get('to_date')
-        year = request.args.get('year', datetime.now().year)
-        # month = request.args.get('month', datetime.now().month)
+        from_date = request.args.get('from_date')
+        to_date = request.args.get('to_date')
+        month = request.args.get("year", datetime.now().year)
+        mon = request.args.get("year", datetime.now().year)
+        kw = request.args.get('kw')
+        keyy = request.args.get('keyy')
+        year = request.args.get('year')
 
         return self.render('admin/stats.html',
-                           stats=utils.month_stats(),
-                           count=utils.count_stats(year=year))
-
-    # def is_accessible(self):
-    #     return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
+                           stats=utils.month_stats(mon=2021, from_date=from_date,
+                                                   to_date=to_date, keyy=keyy, year=year),
+                           count=utils.count_stats(month=2021, kw=kw))
 
 
-admin.add_view(AdminView(Administrator, db.session, name="Nhà quản trị"))
-admin.add_view(CustomerView(Customer, db.session, name='Thông tin khách hàng', category='Khách hàng'))
-admin.add_view(CustomerTypeView(CustomerType, db.session, name='Loại khách', category='Khách hàng'))
-admin.add_view(StaffView(Staff, db.session, name='Nhân viên'))
-admin.add_view(RoomView(Room, db.session, name='Thông tin phòng', category='Phòng'))
-admin.add_view(RoomTypeView(RoomType, db.session, name='Loại phòng', category='Phòng'))
-admin.add_view(BillView(Bill, db.session, name='Danh sách hóa đơn', category='Hóa đơn'))
-admin.add_view(SurchangeView(Surchange, db.session, name='Phụ thu', category='Hóa đơn'))
-admin.add_view(RentalVoucherView(RentalVoucher, db.session, name='Phiếu thuê'))
-admin.add_view(OrderVoucherView(OrderVoucher, db.session, name='Phiếu đặt'))
+admin.add_view(CommonModelView(User, db.session, name='Người dùng'))
+admin.add_view(CommonModelView(Administrator, db.session, name='admin'))
+admin.add_view(CommonModelView(Customer, db.session, name='Thông tin khách hàng', category='Khách hàng'))
+admin.add_view(CommonModelView(CustomerType, db.session, name='Loại khách', category='Khách hàng'))
+admin.add_view(CommonModelView(Staff, db.session, name='Nhân viên'))
+
+admin.add_view(CommonModelView(Room, db.session, name='Thông tin phòng', category='Phòng'))
+admin.add_view(CommonModelView(RoomType, db.session, name='Loại phòng', category='Phòng'))
+admin.add_view(CommonModelView(Bill, db.session, name='Danh sách hóa đơn', category='Hóa đơn'))
+admin.add_view(CommonModelView(Surchange, db.session, name='Phụ thu', category='Hóa đơn'))
+admin.add_view(CommonModelView(RentalVoucher, db.session, name='Phiếu thuê'))
+admin.add_view(CommonModelView(OrderVoucher, db.session, name='Phiếu đặt'))
+
 admin.add_view(StatsView(name='Thống kê'))
-admin.add_view(LogOutView(name='Đăng xuất'))
+admin.add_view(LogoutView(name='Đăng xuất'))
+
 
 admin.add_sub_category(name="customer", parent_name="Khách hàng")
 admin.add_sub_category(name="room", parent_name="Phòng")

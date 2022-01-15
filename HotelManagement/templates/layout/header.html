@@ -16,7 +16,7 @@
                 <li class="nav-item nav-item-login">
                 <a class="nav-link" href="{{ url_for('user_login') }}">
                     {% if current_user.avatar %}
-                        <img src="{{ current_user.avartar }}" width="30px" height="30px" alt="{{ current_user.name }}" class="rounded-circle"/>
+                        <img src="{{ current_user.avatar }}" width="30px" height="30px" alt="{{ current_user.name }}" class="rounded-circle"/>
                     {% else %}
                         <img src="{{ url_for('static', filename='img/background.jpg') }}" width="30px" height="30px" alt="{{ current_user.name }}" class="rounded-circle"/>
                     {% endif %}
@@ -38,19 +38,24 @@
 </nav>
 
 <div class="container alert-box">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for category, message in messages %}
-    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-        <span>{{ message }}</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+{% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %} {% if category ==
+    'error' %}
+    <div class="alert alert-danger alter-dismissable fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+      </button>
     </div>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
+    {% else %}
+    <div class="alert alert-success alter-dismissable fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endif %} {% endfor %} {% endif %} {% endwith %}
+    {% block footer %}
+        {% include 'layout/footer.html' %}
+    {% endblock %}
 </div>
-
-<script>
-  $(document).ready(function () {
-  $("#{{request.endpoint}}").addClass("active"); })
-</script>

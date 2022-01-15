@@ -25,14 +25,15 @@ class Customer(User):
     __tablename__ = 'customer'
 
     id = Column(Integer, ForeignKey('user.id'), primary_key=True)
-    name = Column(String(30), nullable=False)
-    gender = Column(String(5), nullable=False)
-    email = Column(String(10), nullable=False)
-    id_number = Column(String(10), nullable=False)  # Căn cước công dân
+    name = Column(String(50), nullable=False)
+    gender = Column(String(10), nullable=False)
+    email = Column(String(30), nullable=False)
+    id_number = Column(String(20), nullable=False)  # Căn cước công dân
     nationality = Column(String(20), nullable=False)
     address = Column(String(60), nullable=False)
+    phone_number = Column(String(20), nullable=False)
+
     location_id = Column(Integer, ForeignKey('location.id'), nullable=False)
-    phone_number = Column(String(10), nullable=False)
     customer_type_id = Column(Integer, ForeignKey('customer_type.id'), nullable=False)
     rental_vouchers = relationship('RentalVoucher', backref='customer', lazy=True)
     order_vouchers = relationship('OrderVoucher', backref='customer', lazy=True)
@@ -62,12 +63,13 @@ class Staff(User):
 
     id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     name = Column(String(30), nullable=False)
-    gender = Column(String(5), nullable=False)
-    email = Column(String(10), nullable=False)
-    id_number = Column(String(10), nullable=False)
+    gender = Column(String(10), nullable=False)
+    email = Column(String(30), nullable=False)
+    id_number = Column(String(20), nullable=False)
     address = Column(String(60), nullable=False)
+
     location_id = Column(Integer, ForeignKey('location.id'), nullable=False)
-    phone_number = Column(String(10), nullable=False)
+    phone_number = Column(String(20), nullable=False)
     experience = Column(Integer, nullable=False)  # số tháng làm việc
 
     __mapper_args__ = {
@@ -79,8 +81,9 @@ class Location(db.Model):
     __tablename__ = 'location'
 
     id = Column(Integer, primary_key=True)
-    city = Column(String(20), nullable=False)
-    country = Column(String(20), nullable=False)
+    city = Column(String(30), nullable=False)
+    country = Column(String(30), nullable=False)
+
     staff = relationship("Staff", backref='location', lazy=True)
     customer = relationship("Customer", backref='location', lazy=True)
 
@@ -100,10 +103,11 @@ class Room(db.Model):
     __tablename__ = 'room'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    room_name = Column(String(10), nullable=False)
+    room_name = Column(String(30), nullable=False)
     status = Column(Boolean, default=True)
     capacity = Column(Integer, nullable=False, default=0)  # số người trên phòng
-    description = Column(String(60))
+    description = Column(String(255))
+
     room_type_id = Column(Integer, ForeignKey('room_type.id'), nullable=False)
     rental_vouchers = relationship('RentalVoucher', backref='room', lazy=True)
     order_vouchers = relationship('OrderVoucher', backref='room', lazy=True)
@@ -116,9 +120,10 @@ class RoomType(db.Model):
     __tablename__ = 'room_type'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    room_type_name = Column(String(20), nullable=False)
+    room_type_name = Column(String(50), nullable=False)
     maximum_customer = Column(Integer, nullable=False)
     price = Column(Integer, nullable=False)
+
     rooms = relationship('Room', backref='room_type', lazy=False)
 
     def __str__(self):
@@ -130,6 +135,7 @@ class Bill(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     unit_price = Column(Float, default=0)
+
     surchage_id = Column(Integer, ForeignKey('surchange.id'), nullable=False)
     rental_voucher = relationship('RentalVoucher', backref=backref('bill', uselist=False, lazy=True),
                                   foreign_keys='[RentalVoucher.bill_id]', uselist=False, lazy=True)
@@ -158,7 +164,8 @@ class RentalVoucher(db.Model):
     customer_id = Column(Integer, ForeignKey('customer.id'), primary_key=True)
     check_in_date = Column(DateTime, default=datetime.now())
     check_out_date = Column(DateTime, default=datetime.now())
-    bill_id = Column(Integer, ForeignKey('bill.id'), primary_key=True)
+
+    bill_id = Column(Integer, ForeignKey('bill.id'), nullable=True)
 
 
 class OrderVoucher(db.Model):
@@ -169,6 +176,7 @@ class OrderVoucher(db.Model):
     order_date = Column(DateTime, default=datetime.now())
     check_in_date = Column(DateTime, default=datetime.now())
     check_out_date = Column(DateTime, default=datetime.now())
+
     bill_id = Column(Integer, ForeignKey('bill.id'), nullable=False)
 
     def __str__(self):

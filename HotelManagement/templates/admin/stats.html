@@ -1,62 +1,89 @@
 {% extends 'admin/base.html' %}
 {% block body %}
+<br>
 <h1 class="text-center">Thống kê báo cáo doanh thu theo tháng</h1>
-<select class="form-select" aria-label="Default select example">
-  <option selected>Open this select menu</option>
-  <option value="1">One</option>
-  <option value="2">Two</option>
-</select>
+<hr>
+<br>
 <div id="tab1" class="row">
     <div class="table table-striped col-md-5 col-xs-12">
         <table class="table">
-            <tr>
-                <th scope="col">Tháng</th>
-                <th scope="col">Loại phòng</th>
-                <th scope="col">Doanh thu</th>
-                <th scope="col">Lượt thuê</th>
-            </tr>
-            {% for s in stats %}
-            <tr>
-                <td>{{ s[0] }}</td>
-                <td>{{ s[1] }}</td>
-                <td>
-                    {% if s[2] %}
-                    {{ "{:,.0f}".format(s[2]) }} VND
-                    {% else %}
-                    0 VND
-                    {% endif %}
-                </td>
-                <td>{{ s[3] }}</td>
-            </tr>
-            {% endfor %}
+            <thead class="text-center">
+                <tr>
+                    <th scope="col" class="text-left">Loại phòng</th>
+                    <th scope="col">Doanh thu</th>
+                    <th scope="col">Lượt thuê</th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+                {% for s in stats %}
+                <tr>
+                    <td class="text-left">{{ s[1] }}</td>
+                    <td>
+                        {% if s[2] %}
+                        {{ "{:,.0f}".format(s[2]) }} VND
+                        {% else %}
+                        0 VND
+                        {% endif %}
+                    </td>
+                    <td>{{ s[3] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
+        <hr>
+        <form>
+            <div class="form-group">
+                <input type="date" class="form-control" name="from-date" />
+            </div>
+            <div class="form-group">
+                <input type="date" class="form-control" name="to_date" />
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" name="keyy" placeholder="Nhập tháng thống kê..."/>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" name="year" placeholder="Nhập năm thống kê..."/>
+            </div>
+            <input type="submit" value="Thống kê" min="1" class="btn btn-danger" />
+        </form>
     </div>
     <div class="col-md-7 col-sx-12">
+
         <canvas id="MyMonthChart"></canvas>
     </div>
 </div>
-
+<hr>
+<br>
 <div id="tab2" class="row">
     <div class="table table-striped col-md-5 col-xs-12">
         <table class="table">
-            <tr>
-                <th scope="col">Tháng</th>
-                <th scope="col">Phòng</th>
-                <th scope="col">Số ngày thuê</th>
-            </tr>
-            {% for i in count %}
-            <tr>
-                <td>{{ i[0] }}</td>
-                <td>{{ i[1] }}</td>
-                <td>{{ i[2] }}</td>
-            </tr>
-            {% endfor %}
+            <thead class="text-center">
+                <tr>
+                    <th scope="col">Phòng</th>
+                    <th scope="col">Số ngày thuê</th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+                {% for i in count %}
+                <tr>
+                    <td>{{ i[1] }}</td>
+                    <td>{{ i[2] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
     <div class="col-md-7 col-xs-12">
+        <form>
+            <div class="form-group">
+                <input type="text" class="form-control" name="kw" placeholder="Nhập tháng cần thống kê..."/>
+            </div>
+            <input type="submit" value="Thống kê" min="1" class="btn btn-info" />
+        </form>
         <canvas id="MyCountChart"></canvas>
     </div>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -68,7 +95,7 @@
 
     {% for s in stats %}
     {% if s[2] %}
-        labels.push('Tháng {{ s[0] }}')
+        labels.push('Loại phòng {{ s[1] }}')
         data.push({{ s[2] }})
 
         r = parseInt(Math.random() * 255)
@@ -81,8 +108,8 @@
     {% endfor %}
 
     {% for i in count %}
-        labels2.push('Tháng{{ i[0] }}')
-        data2.push('{{ i[2] }}')
+        labels2.push('{{ i[1] }}')
+        data2.push({{ i[2] }})
 
         r = parseInt(Math.random() * 255)
         g = parseInt(Math.random() * 255)
@@ -97,7 +124,7 @@
         const ctx2 = document.getElementById('MyCountChart').getContext('2d');
 
         loadChart(ctx, labels, data, 'bar', colors, borderColors)
-        loadChart2(ctx2, labels2, data2, 'doughnut', colors2, borderColors2)
+        loadChart2(ctx2, labels2, data2, 'bar', colors2, borderColors2)
     }
 
 function loadChart(ctx, labels, data, type, colors, borderColors) {
@@ -145,7 +172,6 @@ function loadChart2(ctx2, labels2, data2, type, colors2, borderColors2) {
         }
     });
 }
-
 </script>
-
+<br>
 {% endblock %}

@@ -1,9 +1,6 @@
 {% extends 'layout/base.html' %}
 
 {% set active_page = "staff_page" %}
-
-{% block title %}Nhân viên BookingHotel{% endblock %}
-
 {% block css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bold.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/perfect-scrollbar.css') }}">
@@ -31,7 +28,7 @@
                     <li class="sidebar-title">Menu</li>
 
                     <li
-                            class="sidebar-item active ">
+                            class="sidebar-item  ">
                         <a href="{{ url_for('staff_page') }}" class='sidebar-link'>
 
                             <span>Bảng phiếu thuê</span>
@@ -39,7 +36,7 @@
                     </li>
 
                     <li
-                            class="sidebar-item ">
+                            class="sidebar-item active">
                         <a href="{{ url_for('staff_page_order') }}" class='sidebar-link'>
 
                             <span>Bảng phiếu đặt</span>
@@ -71,7 +68,7 @@
             <section class="row">
                 <div class="col-12 col-lg-9">
                     <div class="row">
-                        <div class="col-6 col-lg-4 col-md-6">
+                        <div class="col-6 col-lg-6 col-md-6">
                             <div class="card">
                                 <div class="card-body px-3 py-4-5">
                                     <div class="row">
@@ -81,15 +78,15 @@
                                             </div>
                                         </div>
                                         <div class="col-md-8">
-                                            <h6 class="text-muted font-semibold">Số phiếu thuê</h6>
-                                            <span class='tooltip'>Số phiếu thuê được lưu</span>
-                                            <h6 class="font-extrabold mb-0">{{ rental_voucher|length }}</h6>
+                                            <h6 class="text-muted font-semibold">Số phiếu đặt</h6>
+                                            <span class='tooltip'>Số phiếu đặt được lưu</span>
+                                            <h6 class="font-extrabold mb-0">{{ order_voucher|length }}</h6>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-6 col-lg-4 col-md-6">
+                        <div class="col-6 col-lg-6 col-md-6">
                             <div class="card">
                                 <div class="card-body px-3 py-4-5">
                                     <div class="row">
@@ -99,27 +96,9 @@
                                             </div>
                                         </div>
                                         <div class="col-md-8">
-                                            <h6 class="text-muted font-semibold">Thuê trong ngày</h6>
-                                            <span class='tooltip'>Số lượng phiếu thuê trong ngày</span>
-                                            <h6 class="font-extrabold mb-0">{{ rental_voucher|length }}</h6>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-6 col-lg-4 col-md-6">
-                            <div class="card">
-                                <div class="card-body px-3 py-4-5">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="stats-icon green">
-                                                <i class="iconly-boldAdd-User"></i>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <h6 class="text-muted font-semibold">Phòng còn lại</h6>
-                                            <span class='tooltip'>Số lượng phòng còn trống</span>
-                                            <h6 class="font-extrabold mb-0">{{ room_left|length }}</h6>
+                                            <h6 class="text-muted font-semibold">Đặt trong ngày</h6>
+                                            <span class='tooltip'>Số lượng phiếu đặt trong ngày</span>
+                                            <h6 class="font-extrabold mb-0">{{ order_voucher|length }}</h6>
                                         </div>
                                     </div>
                                 </div>
@@ -154,6 +133,7 @@
                                             <th scope="col">Tên khách hàng</th>
                                             <th scope="col">Loại khách</th>
                                             <th scope="col">CMND</th>
+                                            <th scope="col">Ngày đặt</th>
                                             <th scope="col">Ngày thuê</th>
                                             <th scope="col">Ngày trả</th>
                                             <th scope="col"></th>
@@ -161,28 +141,21 @@
                                         </thead>
                                         <tbody>
 
-                                        {% for t in rental_voucher_by %}
+                                        {% for t in order_voucher_by %}
                                         <tr>
                                             <form>
                                                 <th scope="col">{{ loop.index }}</th>
                                                 <td >{{ t[0] }}</td>
                                                 <td>
                                                     {{ t[1] }}
-<!--                                                    <div class="dropdown">-->
-<!--                                                        <a class="page-link btn btn-light dropdown-toggle" href="{{ url_for('staff_page', roomname=t[0], customername=t[1]) }}" data-toggle="dropdown">{{ t[1] }}</a>-->
-<!--                                                        <div class="dropdown-menu">-->
-<!--                                                            {% for c in customer %}-->
-<!--                                                            <div class="dropdown-item">{{ c[0] }}</div>-->
-<!--                                                            {% endfor %}-->
-<!--                                                        </div>-->
-<!--                                                    </div>-->
                                                 </td>
                                                 <td>{{ t[2] }}</td>
                                                 <td>{{ t[3] }}</td>
                                                 <td name="cmnd">{{ t[4] }}</td>
                                                 <td>{{ t[5] }}</td>
+                                                <td>{{ t[6] }}</td>
                                                 <td>
-                                                    <button type="button" class="btn btn-primary">Thanh toán</button>
+                                                    <button type="button" class="btn btn-primary">Thuê</button>
                                                 </td>
                                             </form>
                                         </tr>

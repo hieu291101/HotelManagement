@@ -104,7 +104,7 @@ class Room(db.Model):
     __tablename__ = 'room'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    room_name = Column(String(30), nullable=False, unique=True)
+    room_name = Column(String(30), nullable=False)
     status = Column(Boolean, default=True)
     capacity = Column(Integer, nullable=False, default=0)  # số người trên phòng
     description = Column(String(255))
@@ -141,10 +141,12 @@ class Bill(db.Model):
     unit_price = Column(Float, default=0)
     surchage_id = Column(Integer, ForeignKey('surchange.id'), nullable=False)
     status = Column(Enum(StatusBill), default=StatusBill.NONE)
-    rental_voucher = relationship('RentalVoucher', backref=backref('bill', uselist=False, lazy=True),
-                                  foreign_keys='[RentalVoucher.bill_id]', uselist=False, lazy=True)
-    order_voucher = relationship('OrderVoucher', backref=backref('bill', uselist=False, lazy=True),
-                                 foreign_keys='[OrderVoucher.bill_id]', uselist=False, lazy=True)
+    rental_vouchers = relationship('RentalVoucher', backref='bill', lazy=True)
+    order_vouchers = relationship('OrderVoucher', backref='bill', lazy=True)
+    # rental_voucher = relationship('RentalVoucher', backref=backref('bill', uselist=False, lazy=True),
+    #                               foreign_keys='[RentalVoucher.bill_id]', uselist=False, lazy=True)
+    # order_voucher = relationship('OrderVoucher', backref=backref('bill', uselist=False, lazy=True),
+    #                              foreign_keys='[OrderVoucher.bill_id]', uselist=False, lazy=True)
 
     def __str__(self):
         return str(self.id)

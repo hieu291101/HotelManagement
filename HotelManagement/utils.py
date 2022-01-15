@@ -3,8 +3,8 @@ import hashlib
 
 from sqlalchemy import text
 
-from HotelManagement.models import User, Customer, RentalVoucher, OrderVoucher, Room
-from HotelManagement import db
+from HotelManagement.models import User, Customer, RentalVoucher, OrderVoucher, Room, Bill, Surchange, CustomerType
+from HotelManagement import db, app
 
 
 def get_user_by_id(user_id):
@@ -55,22 +55,70 @@ def load_rental_voucher():
     return db.session.query(Room.room_name, Customer.name, RentalVoucher.check_in_date, RentalVoucher.check_out_date, RentalVoucher.bill_id)\
                      .join(Room, RentalVoucher.room_id.__eq__(Room.id))\
                      .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id)).all()
-# def load_income():
-#     return  db.session.query(Room.room_name, Customer.name, RentalVoucher.check_in_date, RentalVoucher.check_out_date, RentalVoucher.bill_id,
-#                                    Bill.unit_price, Surchange.surchange)\
-#                      .join(Room, RentalVoucher.room_id.__eq__(Room.id))\
-#                      .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id)).all()
 
-def load_rental_voucher_by(customer_name=None):
-    rental_voucher = db.session.query(Room.room_name, Customer.id_number, Customer.name, RentalVoucher.check_in_date, RentalVoucher.check_out_date, RentalVoucher.bill_id)\
+def load_income():
+    income =  db.session.query(Room.room_name, Customer.id_number, Customer.name, RentalVoucher.check_in_date, RentalVoucher.check_out_date,
+                                   Bill.unit_price, Bill.status, Surchange.surchange)\
                      .join(Room, RentalVoucher.room_id.__eq__(Room.id))\
-                     .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id))
+                     .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id))\
+                     .join(Bill, RentalVoucher.bill_id.__eq__(Bill.id))\
+                     .join(Surchange, Surchange.id.__eq__(Bill.surchage_id))
+
+def load_customer_for_rental(room_name=None, customer_name=None):
+    customer = db.session.query(Customer.name, Room.room_name, RentalVoucher.check_in_date, RentalVoucher.check_out_date, RentalVoucher.bill_id) \
+        .join(Room, RentalVoucher.room_id.__eq__(Room.id)) \
+        .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id))
+
+    if room_name:
+        customer = customer.filter(Room.room_name.__eq__(room_name), not Customer.name.__eq__(customer_name))
+
+    return customer.all()
+
+def load_rental_voucher_by(customer_name=None, page=1):
+    rental_voucher = db.session.query(Room.room_name, Customer.name,CustomerType.customer_type ,Customer.id_number,
+                                      RentalVoucher.check_in_date, RentalVoucher.check_out_date, RentalVoucher.bill_id)\
+                     .join(Room, RentalVoucher.room_id.__eq__(Room.id))\
+                     .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id)) \
+                     .join(CustomerType, Customer.customer_type_id.__eq__(CustomerType.id))
+
     if customer_name:
         rental_voucher = rental_voucher.filter(Customer.name.contains(customer_name))
 
-    return rental_voucher
+    page_size = app.config['PAGE_SIZE']
+    start = (page - 1) * page_size
+    end = start + page_size
+
+    return rental_voucher.slice(start, end).all()
+
+def count_rental_vouchers():
+    return RentalVoucher.query.count()
+
+def count_order_vouchers():
+    return OrderVoucher.query.count()
 
 def load_room_left():
    return db.engine.execute(text("SELECT id FROM room WHERE id not in (SELECT room_id FROM rental_voucher)")).all()
+
+
+def load_order_voucher():
+    return db.session.query(Room.room_name, Customer.name, OrderVoucher.check_in_date, OrderVoucher.check_out_date, OrderVoucher.bill_id)\
+                     .join(Room, OrderVoucher.room_id.__eq__(Room.id))\
+                     .join(Customer, OrderVoucher.customer_id.__eq__(Customer.id)).all()
+
+def load_order_voucher_by(customer_name=None, page=1):
+    order_voucher = db.session.query(Room.room_name, Customer.name,CustomerType.customer_type ,Customer.id_number,
+                                     OrderVoucher.order_date, OrderVoucher.check_in_date, OrderVoucher.check_out_date, OrderVoucher.bill_id)\
+                     .join(Room, OrderVoucher.room_id.__eq__(Room.id))\
+                     .join(Customer, OrderVoucher.customer_id.__eq__(Customer.id)) \
+                     .join(CustomerType, Customer.customer_type_id.__eq__(CustomerType.id))
+
+    if customer_name:
+        order_voucher = order_voucher.filter(Customer.name.contains(customer_name))
+
+    page_size = app.config['PAGE_SIZE']
+    start = (page - 1) * page_size
+    end = start + page_size
+
+    return order_voucher.slice(start, end).all()
 
 

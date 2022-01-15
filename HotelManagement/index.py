@@ -1,4 +1,8 @@
 import datetime
+import math
+
+from sqlalchemy import null
+
 from HotelManagement import app, login
 from HotelManagement.admin import *
 import utils
@@ -98,7 +102,6 @@ def user_login():
     return render_template('login.html')
 
 
-
 @app.route('/user-logout')
 def user_logout():
     logout_user()
@@ -122,9 +125,9 @@ def admin_login():
 def load_user(user_id):
     return utils.get_user_by_id(user_id=user_id)
 
+
 @app.route('/user-pagination')
 def user_pagination():
-
     if current_user.type == 'administrator':
         return redirect('admin')
     elif current_user.type == 'staff':
@@ -132,16 +135,41 @@ def user_pagination():
     else:
         return redirect('/')
 
+
 @app.route('/staff-page')
 def staff_page():
-    if not current_user.is_authenticated and current_user.type=='staff':
+    if not current_user.is_authenticated and current_user.type == 'staff':
         return redirect('/user-login')
 
-    room_name = request.args.get('keyword')
+    room_name = request.args.get('roomname')
+    customer_name = request.args.get('customername')
+    keyword = request.args.get('keyword')
+    page = request.args.get('page', 1)
+    cmnd = request.args.get('cmnd')
+
+    counter = utils.count_rental_vouchers()
+    rental_voucher_by = utils.load_rental_voucher_by(customer_name=keyword, page=int(page))
+    customer = utils.load_customer_for_rental(room_name=room_name, customer_name=customer_name)
+
     return render_template('staff.html',
                            rental_voucher=utils.load_rental_voucher(), room_left=utils.load_room_left(),
-                           rental_voucher_by=utils.load_rental_voucher_by(room_name))
+                           rental_voucher_by=rental_voucher_by, pages=math.ceil(counter / app.config['PAGE_SIZE']),
+                           customer=customer)
 
+@app.route('/staff-page/order')
+def staff_page_order():
+    if not current_user.is_authenticated and current_user.type == 'staff':
+        return redirect('/user-login')
+
+    keyword = request.args.get('keyword')
+    page = request.args.get('page', 1)
+
+    counter = utils.count_order_vouchers()
+    order_voucher_by = utils.load_order_voucher_by(customer_name=keyword, page=int(page))
+
+    return render_template('staff_order.html',order_voucher=utils.load_order_voucher(),
+                           order_voucher_by=order_voucher_by,
+                           pages=math.ceil(counter / app.config['PAGE_SIZE']))
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -5,19 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="18162bcb-000d-425f-8bf5-19d2a7d04bf4" name="Changes" comment="Merge branch 'main' into feature-thanhdinh&#10;&#10;# Conflicts:&#10;#&#9;.idea/misc.xml&#10;#&#9;HotelManagement/index.py&#10;#&#9;HotelManagement/models.py&#10;#&#9;HotelManagement/templates/login.html">
-      <change afterPath="$PROJECT_DIR$/HotelManagement/static/css/app.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/HotelManagement/static/css/bold.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/HotelManagement/static/css/bootstrap-icons.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/HotelManagement/static/css/perfect-scrollbar.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/HotelManagement/static/css/staff.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/HotelManagement/templates/staff.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/HotelManagement.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/HotelManagement.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HotelManagement/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HotelManagement/index.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/index.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HotelManagement/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/templates/layout/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/layout/header.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HotelManagement/static/css/staff.css" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/static/css/staff.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HotelManagement/templates/staff.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/staff.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HotelManagement/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

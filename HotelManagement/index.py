@@ -8,7 +8,7 @@ from HotelManagement.admin import *
 import utils
 import cloudinary.uploader
 from flask_login import login_user
-from flask import render_template, request, redirect, flash, url_for
+from flask import render_template, request, redirect, flash, url_for, session, jsonify
 
 
 @app.route('/', methods=["GET", "POST"])
@@ -18,6 +18,10 @@ def home():
         checkindate = req.get('checkindate')
         checkoutdate = req.get('checkoutdate')
         adults = req.get('adults')
+
+        session['checkindate'] = checkindate
+        session['checkoutdate'] = checkoutdate
+        session['adults'] = adults
 
         # Kiểm tra nhập đủ giá trị hay chưa
         if checkindate and checkoutdate and adults:
@@ -35,9 +39,49 @@ def home():
         elif checkindatetime < datetime.datetime.now() and (checkindatetime - checkoutdatetime).days == 0:
             flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "warning")
             return redirect(request.url)
-        return redirect('/user-login')
+        return redirect('/order')
 
     return render_template('index.html')
+
+@app.route('/order', methods=["GET", "POST"])
+def order_room():
+
+    if request.method == "POST":
+        req = request.form
+        checkindate = req.get('checkindate')
+        checkoutdate = req.get('checkoutdate')
+        adults = req.get('adults')
+
+        session['checkindate'] = checkindate
+        session['checkoutdate'] = checkoutdate
+        session['adults'] = adults
+
+        # Kiểm tra nhập đủ giá trị hay chưa
+        if checkindate and checkoutdate and adults:
+            checkindatetime = datetime.datetime.strptime(checkindate, "%Y-%m-%d")
+            checkoutdatetime = datetime.datetime.strptime(checkindate, "%Y-%m-%d")
+            check_dates = utils.check_date(datetime.datetime.now(), checkindatetime)
+        else:
+            flash('Chưa nhập đủ giá trị', 'danger')
+            return redirect(request.url)
+
+        # Kiểm tra các ràng buộc
+        if not check_dates:
+            flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "warning")
+            return redirect(request.url)
+        elif checkindatetime < datetime.datetime.now() and (checkindatetime - checkoutdatetime).days == 0:
+            flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "warning")
+            return redirect(request.url)
+
+    page = request.args.get('page', 1)
+    check_in_date = session['checkindate']
+    check_out_date = session['checkoutdate']
+
+    counter = utils.count_room_empty()
+    load_room_empty = utils.load_room_empty(from_date=check_in_date, to_date=check_out_date, page=page)
+
+    return render_template('order.html', load_room_empty=load_room_empty,
+                           pages=math.ceil(counter / app.config['PAGE_SIZE']))
 
 
 @app.route('/user-register', methods=['get', 'post'])
@@ -170,6 +214,26 @@ def staff_page_order():
     return render_template('staff_order.html',order_voucher=utils.load_order_voucher(),
                            order_voucher_by=order_voucher_by,
                            pages=math.ceil(counter / app.config['PAGE_SIZE']))
+
+@app.route('/api/add-order', methods=['post'])
+def add_to_order():
+    check_in_date=''
+    check_out_date=''
+    people=''
+
+    order = session.get('order')
+    if not order:
+        order={}
+
+    order= {
+        'check_in_date': check_in_date,
+        'check_out_date': check_out_date,
+        'people': people
+    }
+
+    session['order'] = order
+
+    return jsonify()
 
 if __name__ == "__main__":
     app.run(debug=True)

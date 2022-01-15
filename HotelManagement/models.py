@@ -99,13 +99,16 @@ class Administrator(User):
         'polymorphic_identity': 'administrator'
     }
 
+class Status(enum.Enum):
+    DONE = 'Xong'
+    NONE = 'Chưa'
 
 class Room(db.Model):
     __tablename__ = 'room'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     room_name = Column(String(30), nullable=False)
-    status = Column(Boolean, default=True)
+    status = Column(Enum(Status), default=Status.NONE)
     capacity = Column(Integer, nullable=False, default=0)  # số người trên phòng
     description = Column(String(255))
 
@@ -130,17 +133,13 @@ class RoomType(db.Model):
     def __str__(self):
         return self.room_type_name
 
-class StatusBill(enum.Enum):
-    DONE = 'Đã thanh toán'
-    NONE = 'Chưa thanh toán'
-
 class Bill(db.Model):
     __tablename__ = 'bill'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     unit_price = Column(Float, default=0)
     surchage_id = Column(Integer, ForeignKey('surchange.id'), nullable=False)
-    status = Column(Enum(StatusBill), default=StatusBill.NONE)
+    status = Column(Enum(Status), default=Status.NONE)
     rental_vouchers = relationship('RentalVoucher', backref='bill', lazy=True)
     order_vouchers = relationship('OrderVoucher', backref='bill', lazy=True)
     # rental_voucher = relationship('RentalVoucher', backref=backref('bill', uselist=False, lazy=True),

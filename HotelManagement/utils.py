@@ -3,7 +3,8 @@ import hashlib
 
 from sqlalchemy import text
 
-from HotelManagement.models import User, Customer, RentalVoucher, OrderVoucher, Room, Bill, Surchange, CustomerType
+from HotelManagement.models import User, Customer, RentalVoucher, OrderVoucher, Room, Bill, Surchange, CustomerType, \
+    RoomType
 from HotelManagement import db, app
 
 
@@ -22,7 +23,6 @@ def check_login(username, password):
 def check_date(orderdate, checkindate):
     if checkindate and orderdate:
         delta = checkindate - orderdate
-
         if delta.days > 28:
             return False
 
@@ -121,4 +121,33 @@ def load_order_voucher_by(customer_name=None, page=1):
 
     return order_voucher.slice(start, end).all()
 
+def load_room_empty(from_date=None, to_date=None, page=1):
+    room = db.session.query(RoomType.room_type_name.distinct(), RoomType.maximum_customer,RoomType.price, Room.description, Room.status,
+                            OrderVoucher.check_in_date, OrderVoucher.check_out_date, Room.room_name)\
+                            .join(Room, OrderVoucher.room_id.__eq__(Room.id))\
+                            .join(RoomType, Room.room_type_id.__eq__(RoomType.id))
 
+    room = room.filter(Room.status.__eq__('NONE'))
+
+    # if from_date and to_date:
+    #     if (OrderVoucher.check_out_date.__le__(from_date)):
+    #         room = room.filter(OrderVoucher.check_out_date.__le__(from_date))
+    #     elif (OrderVoucher.check_in_date.__ge__(to_date)):
+    #         room = room.filter(OrderVoucher.check_in_date.__ge__(to_date))
+
+    page_size = app.config['PAGE_SIZE']
+    start = (page - 1) * page_size
+    end = start + page_size
+
+    return room.slice(start, end).all()
+
+def count_room_empty():
+    room = db.session.query(RoomType.room_type_name, RoomType.maximum_customer, RoomType.price, Room.description,
+                            Room.status,
+                            OrderVoucher.check_in_date, OrderVoucher.check_out_date) \
+                            .join(Room, OrderVoucher.room_id.__eq__(Room.id)) \
+                            .join(RoomType, Room.room_type_id.__eq__(RoomType.id))
+
+    room = room.filter(Room.status.__eq__('EMPTY'))
+
+    return room.count()

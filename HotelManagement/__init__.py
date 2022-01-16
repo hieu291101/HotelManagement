@@ -24,7 +24,6 @@ cloudinary.config(
     api_secret="TcLlKGeCuAhiGMqa_DzajlI_z8U"
 )
 
-
 @babel.localeselector
 def get_locale():
     return 'vi'

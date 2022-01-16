@@ -5,6 +5,7 @@ from HotelManagement.models import User, Customer
 from HotelManagement import db
 
 
+
 def get_user_by_id(user_id):
     return User.query.get(user_id)
 
@@ -23,7 +24,6 @@ def check_date(orderdate, checkindate):
 
         if delta.days > 28:
             return False
-
     return True
 
 
@@ -48,5 +48,3 @@ def add_customer(name, username, email, phone, identity, nationality,
                         avatar=kwargs.get('avatar'))
     db.session.add(customer)
     db.session.commit()
-
-# comment

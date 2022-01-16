@@ -52,10 +52,6 @@ def order_room():
         checkoutdate = req.get('checkoutdate')
         adults = req.get('adults')
 
-        session['checkindate'] = checkindate
-        session['checkoutdate'] = checkoutdate
-        session['adults'] = adults
-
         # Kiểm tra nhập đủ giá trị hay chưa
         if checkindate and checkoutdate and adults:
             checkindatetime = datetime.datetime.strptime(checkindate, "%Y-%m-%d")
@@ -73,16 +69,25 @@ def order_room():
             flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "warning")
             return redirect(request.url)
 
+        session['checkindate'] = checkindate
+        session['checkoutdate'] = checkoutdate
+        session['adults'] = adults
+
     page = request.args.get('page', 1)
-    check_in_date = session['checkindate']
-    check_out_date = session['checkoutdate']
 
-    counter = utils.count_room_empty()
-    load_room_empty = utils.load_room_empty(from_date=check_in_date, to_date=check_out_date, page=page)
+    counter = utils.count_room_type()
+    load_room_type = utils.load_room_type(page=page)
 
-    return render_template('order.html', load_room_empty=load_room_empty,
+    return render_template('order.html', load_room_type=load_room_type,
                            pages=math.ceil(counter / app.config['PAGE_SIZE']))
 
+@app.context_processor
+def utility_processor():
+    def count_room_by_room_type(roomtype):
+        counter_room_full = utils.count_room_full_by(from_date=session['checkindate'], to_date=session['checkoutdate'],room_type=roomtype )
+        counter = utils.count_room_empty(room_type=roomtype)
+        return  counter - counter_room_full
+    return dict(count_room_by_room_type=count_room_by_room_type, order_stats=utils.count_order(session.get('order')))
 
 @app.route('/user-register', methods=['get', 'post'])
 def user_register():
@@ -217,23 +222,35 @@ def staff_page_order():
 
 @app.route('/api/add-order', methods=['post'])
 def add_to_order():
-    check_in_date=''
-    check_out_date=''
-    people=''
+    data = request.json
+    id=str(data.get('id'))
+    room_type_name=data.get('room_type_name')
+    capacity=data.get('capacity')
+    price=data.get('price')
 
     order = session.get('order')
     if not order:
         order={}
 
-    order= {
-        'check_in_date': check_in_date,
-        'check_out_date': check_out_date,
-        'people': people
-    }
+    if id in order:
+        order[id]['quantity'] = order[id]['quantity'] + 1
+    else:
+        order[id] = {
+            'id': id,
+            'room_type_name': room_type_name,
+            'capacity': capacity,
+            'price': price,
+            'quantity': 1
+        }
 
     session['order'] = order
 
-    return jsonify()
+    return jsonify(utils.count_order(order))
+
+@app.route('/order-detail')
+def order_detail():
+    return render_template('order_detail.html',
+                           stats = utils.count_order(session['order']))
 
 if __name__ == "__main__":
     app.run(debug=True)

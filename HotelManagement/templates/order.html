@@ -1,5 +1,7 @@
 {% extends 'layout/base.html' %}
 
+{% set active_page = "order" %}
+
 {% block title %}Đặt phòng{% endblock %}
 {% block css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bold.css') }}">
@@ -51,20 +53,9 @@
                 <div class="col-12 col-lg-9">
                     <div class="row">
                         <div class="col-12">
-                            <form class="input-group input-group-search-rental">
-                                <div class="form-outline">
-                                    <label class="form-label" for="form1" >Search</label>
-                                    <input type="search" id="form1" class="form-control" name="keyword" placeholder="Nhập tên khách hàng hoặc CMND..."/>
-                                </div>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </form>
-                        </div>
-                        <div class="col-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4>Phiếu thuê</h4>
+                                    <h4>Loại phòng</h4>
                                 </div>
                                 <div class="card-body">
                                     <div id="chart-profile-visit"></div>
@@ -75,32 +66,30 @@
                                             <th scope="col">Loại chỗ ở</th>
                                             <th scope="col">Phù hợp cho</th>
                                             <th scope="col">Giá cho 1 đêm</th>
-                                            <th scope="col">Ngày thuê</th>
-                                            <th scope="col">Ngày trả</th>
+                                            <th scope="col">Phòng còn lại</th>
                                             <th scope="col"></th>
                                         </tr>
                                         </thead>
                                         <tbody>
 
-                                        {% for t in load_room_empty %}
+                                        {% for t in load_room_type %}
                                         <tr>
                                             <form>
                                                 <th scope="col">{{ loop.index }}</th>
                                                 <td >
-                                                    {{ t[0] }}
+                                                    {{ t.room_type_name }}
                                                     <hr>
-                                                    {{ t[3] }}
+                                                    {{ t.description }}
                                                 </td>
                                                 <td>
-                                                    {{ t[1] }} <span> người</span>
+                                                    {{ t.maximum_customer }} <span> người</span>
                                                 </td>
                                                 <td>
-                                                    {{ t[2] }} <span> đ</span>
+                                                    {{ "{:,.1f}".format(t.price) }} <span> đ</span>
                                                 </td>
-                                                <td>{{ t[5] }}</td>
-                                                <td>{{ t[6] }}</td>
+                                                <td><span>Số phòng còn lại: </span><span id="room-left">{{ count_room_by_room_type(t.room_type_name) }}</span></td>
                                                 <td>
-                                                    <button type="button" class="btn btn-primary">Thanh toán</button>
+                                                    <button type="button" class="btn btn-primary" onclick="addToOrder( {{ t.id }}, '{{ t.room_type_name }}', {{ t.maximum_customer }}, {{ t.price }} )">Đặt phòng</button>
                                                 </td>
                                             </form>
                                         </tr>

@@ -110,7 +110,6 @@ class Room(db.Model):
     room_name = Column(String(30), nullable=False)
     status = Column(Enum(Status), default=Status.NONE)
     capacity = Column(Integer, nullable=False, default=0)  # số người trên phòng
-    description = Column(String(255))
 
     room_type_id = Column(Integer, ForeignKey('room_type.id'), nullable=False)
     rental_vouchers = relationship('RentalVoucher', backref='room', lazy=True)
@@ -125,6 +124,7 @@ class RoomType(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     room_type_name = Column(String(50), nullable=False)
+    description = Column(String(255))
     maximum_customer = Column(Integer, nullable=False)
     price = Column(Integer, nullable=False)
 

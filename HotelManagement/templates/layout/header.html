@@ -7,6 +7,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
+            {% if active_page == 'order' %}
+                <li class="{{ 'nav-item nav-item-common' }}">
+                <a class="nav-link" href="{{ url_for('order_detail') }}"><i class="fas fa-shopping-cart"></i><span class="badge badge-info" id="orderCounter">{{ order_stats.total_quantity}}</span></a>
+            </li>
+            {% endif %}
             <li class="{{ 'nav-item nav-item-common active' if active_page == 'home' else 'nav-item nav-item-common' }}">
                 <a class="nav-link" href="{{ url_for('home') }}">Trang chủ</a>
             </li>

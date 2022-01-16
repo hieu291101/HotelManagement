@@ -1,0 +1,81 @@
+{% extends 'layout/base.html' %}
+
+{% set active_page = "order" %}
+
+{% block title %}Phiếu đặt{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bold.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/perfect-scrollbar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-icons.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/staff.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/order.css') }}">
+{% endblock %}
+{% block content %}
+<div id="main" class="vh-100">
+        <div class="page-heading">
+            <h3>Đặt phòng</h3>
+        </div>
+        <div class="page-content">
+            <section class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card container">
+                                <div class="card-header">
+                                    <h4>Loại phòng</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div id="chart-profile-visit"></div>
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Loại chỗ ở</th>
+                                            <th scope="col">Phù hợp cho</th>
+                                            <th scope="col">Giá cho 1 đêm</th>
+                                            <th scope="col">Số lượng phòng đặt</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% if 'order' in session and session['order'] %}
+                                        {% for t in session['order'].values() %}
+                                        <tr>
+                                            <form>
+                                                <th scope="col">{{ loop.index }}</th>
+                                                <td >
+                                                    {{ t.room_type_name }}
+                                                </td>
+                                                <td>
+                                                    {{ t.capacity }} <span> người</span>
+                                                </td>
+                                                <td>
+                                                    {{ "{:,.1f}".format(t.price) }} <span> đ</span>
+                                                </td>
+                                                <td>{{ t.quantity }}</td>
+                                            </form>
+                                        </tr>
+                                        {% endfor %}
+                                        {% else %}
+                                        <tr>Chưa có phòng nào được chọn</tr>
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
+
+                                    <div class="alert alert-info">
+                                        <h5>Tổng số phòng đặt: {{ stats.total_quantity }}</h5>
+                                        <h5>Tổng giá tiền: {{ "{:,.1f}".format(stats.total_amount) }}</h5>
+                                    </div>
+
+                                    <button type="button" class="btn btn-primary" onclick="">Đặt phòng</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}

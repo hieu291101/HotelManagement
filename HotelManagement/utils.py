@@ -121,33 +121,54 @@ def load_order_voucher_by(customer_name=None, page=1):
 
     return order_voucher.slice(start, end).all()
 
-def load_room_empty(from_date=None, to_date=None, page=1):
-    room = db.session.query(RoomType.room_type_name.distinct(), RoomType.maximum_customer,RoomType.price, Room.description, Room.status,
-                            OrderVoucher.check_in_date, OrderVoucher.check_out_date, Room.room_name)\
-                            .join(Room, OrderVoucher.room_id.__eq__(Room.id))\
-                            .join(RoomType, Room.room_type_id.__eq__(RoomType.id))
-
-    room = room.filter(Room.status.__eq__('NONE'))
-
-    # if from_date and to_date:
-    #     if (OrderVoucher.check_out_date.__le__(from_date)):
-    #         room = room.filter(OrderVoucher.check_out_date.__le__(from_date))
-    #     elif (OrderVoucher.check_in_date.__ge__(to_date)):
-    #         room = room.filter(OrderVoucher.check_in_date.__ge__(to_date))
+def load_room_type(page=1):
+    room_type=db.session.query(RoomType.id, RoomType.room_type_name,RoomType.description,RoomType.maximum_customer, RoomType.price)
 
     page_size = app.config['PAGE_SIZE']
     start = (page - 1) * page_size
     end = start + page_size
 
-    return room.slice(start, end).all()
+    return room_type.slice(start, end).all()
 
-def count_room_empty():
-    room = db.session.query(RoomType.room_type_name, RoomType.maximum_customer, RoomType.price, Room.description,
-                            Room.status,
-                            OrderVoucher.check_in_date, OrderVoucher.check_out_date) \
-                            .join(Room, OrderVoucher.room_id.__eq__(Room.id)) \
+def count_room_type():
+    return RoomType.query.count()
+
+def count_room_full_by(from_date=None, to_date=None, room_type=None):
+    room = db.session.query(RoomType.room_type_name, RoomType.maximum_customer,RoomType.price, Room.status,
+                            OrderVoucher.check_in_date, OrderVoucher.check_out_date, Room.room_name)\
+                            .join(Room, OrderVoucher.room_id.__eq__(Room.id))\
                             .join(RoomType, Room.room_type_id.__eq__(RoomType.id))
 
-    room = room.filter(Room.status.__eq__('EMPTY'))
+    if room_type:
+        room=room.filter(RoomType.room_type_name.__eq__(room_type))
+
+    if from_date:
+        room = room.filter(OrderVoucher.check_out_date.__ge__(from_date))
+    if to_date:
+        room = room.filter(OrderVoucher.check_in_date.__le__(to_date))
+
 
     return room.count()
+
+def count_room_empty(room_type):
+    room = db.session.query(RoomType.room_type_name, RoomType.maximum_customer, RoomType.price, Room.status,
+                             Room.room_name) \
+                .join(RoomType, Room.room_type_id.__eq__(RoomType.id))
+
+    if room_type:
+        room=room.filter(RoomType.room_type_name.__eq__(room_type))
+
+    return room.count()
+
+def count_order(order):
+    total_quantity, total_amount = 0, 0
+
+    if order:
+        for c in order.values():
+            total_quantity += c['quantity']
+            total_amount += c['quantity'] * c['price']
+
+    return {
+        'total_quantity': total_quantity,
+        'total_amount': total_amount
+    }

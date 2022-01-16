@@ -1,10 +1,12 @@
-from HotelManagement import admin, db
+from datetime import datetime
+
+from HotelManagement import admin, db, utils
 from HotelManagement.models import User, Administrator, Customer, CustomerType, Staff, Room, RoomType, Bill, Surchange, \
     RentalVoucher, OrderVoucher
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import BaseView, expose
 from flask_login import logout_user, current_user
-from flask import redirect
+from flask import redirect, request
 
 
 # Đã đăng nhập
@@ -155,7 +157,18 @@ class LogoutView(AuthenticationBaseView):
 class StatsView(AuthenticationBaseView):
     @expose('/')
     def index(self):
-        return self.render('admin/stats.html')
+        from_date = request.args.get('from_date')
+        to_date = request.args.get('to_date')
+        month = request.args.get("year", datetime.now().year)
+        mon = request.args.get("year", datetime.now().year)
+        kw = request.args.get('kw')
+        keyy = request.args.get('keyy')
+        year = request.args.get('year')
+
+        return self.render('admin/stats.html',
+                           stats=utils.month_stats(mon=2021, from_date=from_date,
+                                                   to_date=to_date, keyy=keyy, year=year),
+                           count=utils.count_stats(month=2021, kw=kw))
 
 
 admin.add_view(CommonModelView(User, db.session, name='Người dùng'))

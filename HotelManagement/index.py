@@ -247,10 +247,44 @@ def add_to_order():
 
     return jsonify(utils.count_order(order))
 
+# @app.route('/api/add-staff-order', methods=['post'])
+# def add_to_order():
+#     data = request.json
+#     id=str(data.get('id'))
+#     room_type_name=data.get('room_type_name')
+#     capacity=data.get('capacity')
+#     price=data.get('price')
+#
+#     order = session.get('staff-order')
+#     if not order:
+#         order={}
+#
+#     if id in order:
+#         order[id]['quantity'] = order[id]['quantity'] + 1
+#     else:
+#         order[id] = {
+#             'id': id,
+#             'room_type_name': room_type_name,
+#             'capacity': capacity,
+#             'price': price,
+#             'quantity': 1
+#         }
+#
+#     session['order'] = order
+
 @app.route('/order-detail')
 def order_detail():
     return render_template('order_detail.html',
                            stats = utils.count_order(session['order']))
+
+# @app.route('/api/pay', methods=['post'])
+# def pay():
+#     try
+#     uti
+#     except:
+#         return jsonify({'code', 200})
+#
+#     return jsonify({'code': 404})
 
 if __name__ == "__main__":
     app.run(debug=True)

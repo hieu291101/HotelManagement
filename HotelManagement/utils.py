@@ -1,7 +1,7 @@
 import datetime
 import hashlib
 
-from sqlalchemy import text
+from sqlalchemy import text, extract, func
 
 from HotelManagement.models import User, Customer, RentalVoucher, OrderVoucher, Room, Bill, Surchange, CustomerType, \
     RoomType
@@ -100,6 +100,8 @@ def load_room_left():
    return db.engine.execute(text("SELECT id FROM room WHERE id not in (SELECT room_id FROM rental_voucher)")).all()
 
 
+
+
 def load_order_voucher():
     return db.session.query(Room.room_name, Customer.name, OrderVoucher.check_in_date, OrderVoucher.check_out_date, OrderVoucher.bill_id)\
                      .join(Room, OrderVoucher.room_id.__eq__(Room.id))\
@@ -172,3 +174,53 @@ def count_order(order):
         'total_quantity': total_quantity,
         'total_amount': total_amount
     }
+
+def month_stats(mon, from_date=None, to_date=None, keyy=None, year=None):
+    s = db.session.query(extract('month', RentalVoucher.check_in_date), RoomType.room_type_name,
+                         func.sum(Bill.unit_price * Surchange.surchange + Bill.unit_price), func.count(Bill.id)) \
+        .join(Bill, RentalVoucher.bill_id.__eq__(Bill.id), isouter=True) \
+        .join(Room, RentalVoucher.room_id.__eq__(Room.id), isouter=True) \
+        .join(RoomType, Room.room_type_id.__eq__(RoomType.id), isouter=True) \
+        .join(Surchange, Bill.surchage_id.__eq__(Surchange.id), isouter=True) \
+        .filter(extract('year', RentalVoucher.check_in_date) == mon) \
+        .group_by(RoomType.room_type_name) \
+        .order_by(RoomType.room_type_name)
+
+    if from_date:
+        s = s.filter(RentalVoucher.check_in_date.__ge__(from_date))
+    if to_date:
+        s = s.filter(RentalVoucher.check_in_date.__le__(to_date))
+    if keyy:
+        s = s.filter(extract('month', RentalVoucher.check_in_date).__eq__(keyy))
+    if year:
+        s = s.filter(extract('year', RentalVoucher.check_in_date).__eq__(year))
+
+    return s.all()
+
+
+# def sum_grade(S=0):
+#     i = func.sum(Bill.unit_price * Surchange.surchange + Bill.unit_price)
+#     n = func.count(RoomType.room_type_name)
+#     for i in (1, n+1):
+#         S += i
+#     return S
+
+
+def count_stats(month, kw=None):
+    i = db.session.query(extract('month', RentalVoucher.check_in_date), Room.room_name,
+                         func.sum(func.datediff(RentalVoucher.check_out_date, RentalVoucher.check_in_date))) \
+        .join(Room, RentalVoucher.room_id.__eq__(Room.id), isouter=True) \
+        .filter(extract('year', RentalVoucher.check_in_date) == month) \
+        .group_by(Room.room_name) \
+        .order_by(Room.room_name)
+
+    if kw:
+        i = i.filter(extract('month', RentalVoucher.check_in_date).__eq__(kw))
+
+    return i.all()
+
+# def add_order(order):
+#     if order:
+#         order_voucher = OrderVoucher()
+
+# def add_order_voucher()

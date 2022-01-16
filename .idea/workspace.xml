@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="18162bcb-000d-425f-8bf5-19d2a7d04bf4" name="Changes" comment="Merge branch 'main' into feature-thanhdinh&#10;&#10;# Conflicts:&#10;#&#9;.idea/misc.xml&#10;#&#9;HotelManagement/index.py&#10;#&#9;HotelManagement/models.py&#10;#&#9;HotelManagement/templates/login.html">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="18162bcb-000d-425f-8bf5-19d2a7d04bf4" name="Changes" comment="Merge branch 'main' into feature-thanhdinh&#10;&#10;# Conflicts:&#10;#&#9;.idea/misc.xml&#10;#&#9;HotelManagement/index.py&#10;#&#9;HotelManagement/models.py&#10;#&#9;HotelManagement/templates/login.html" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,9 +23,12 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/HotelManagement/admin.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/HotelManagement/templates/layout/header.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/HotelManagement/index.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/HotelManagement/utils.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/HotelManagement/templates/register.html" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/HotelManagement/templates/admin/stats.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/HotelManagement/__init__.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />

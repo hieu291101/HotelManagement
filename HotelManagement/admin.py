@@ -1,17 +1,18 @@
-from HotelManagement import admin, db
+from datetime import datetime
+
+from HotelManagement import admin, db, utils
 from HotelManagement.models import User, Administrator, Customer, CustomerType, Staff, Room, RoomType, Bill, Surchange, \
     RentalVoucher, OrderVoucher
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import BaseView, expose
 from flask_login import logout_user, current_user
-from flask import redirect
+from flask import redirect, request
 
 
 # Đã đăng nhập
 class AuthenticationBaseView(BaseView):
     def is_accessible(self):
-        return current_user.is_authenticated
-
+        return current_user.is_authenticated and current_user.type == 'administrator'
 
 class CommonModelView(ModelView):
     can_view_details = True
@@ -21,6 +22,7 @@ class CommonModelView(ModelView):
 
     # def is_accessible(self):
     #     return current_user.is_authenticated and current_user.type == 'administrator'
+
 
 
 class AdminView(CommonModelView):
@@ -100,7 +102,7 @@ class RoomTypeView(CommonModelView):
 
 
 class BillView(CommonModelView):
-    can_create = False
+    # can_create = False
     can_edit = False
     column_display_pk = True
     column_labels = {
@@ -120,8 +122,8 @@ class SurchangeView(CommonModelView):
 
 
 class RentalVoucherView(CommonModelView):
-    can_create = False
-    can_edit = False
+    # can_create = False
+    # can_edit = False
     column_labels = {
         'check_in_date': 'Ngày nhận phòng',
         'check_out_date': 'Ngày trả phòng',
@@ -132,7 +134,7 @@ class RentalVoucherView(CommonModelView):
 
 
 class OrderVoucherView(CommonModelView):
-    can_create = False
+    # can_create = False
     can_edit = False
     column_labels = {
         'order_date': 'Ngày đặt phòng',
@@ -152,24 +154,35 @@ class LogoutView(AuthenticationBaseView):
         return redirect('/admin')
 
 
-class StatsView(AuthenticationBaseView):
+class StatsView(BaseView):
     @expose('/')
     def index(self):
-        return self.render('admin/stats.html')
+        from_date = request.args.get('from_date')
+        to_date = request.args.get('to_date')
+        month = request.args.get("year", datetime.now().year)
+        mon = request.args.get("year", datetime.now().year)
+        kw = request.args.get('kw')
+        keyy = request.args.get('keyy')
+        year = request.args.get('year')
+
+        return self.render('admin/stats.html',
+                           stats=utils.month_stats(mon=2021, from_date=from_date,
+                                                   to_date=to_date, keyy=keyy, year=year),
+                           count=utils.count_stats(month=2021, kw=kw))
 
 
 admin.add_view(CommonModelView(User, db.session, name='Người dùng'))
-admin.add_view(CommonModelView(Administrator, db.session, name='admin'))
-admin.add_view(CommonModelView(Customer, db.session, name='Thông tin khách hàng', category='Khách hàng'))
-admin.add_view(CommonModelView(CustomerType, db.session, name='Loại khách', category='Khách hàng'))
-admin.add_view(CommonModelView(Staff, db.session, name='Nhân viên'))
+admin.add_view(AdminView(Administrator, db.session, name='admin'))
+admin.add_view(CustomerView(Customer, db.session, name='Thông tin khách hàng', category='Khách hàng'))
+admin.add_view(CustomerTypeView(CustomerType, db.session, name='Loại khách', category='Khách hàng'))
+admin.add_view(StaffView(Staff, db.session, name='Nhân viên'))
 
-admin.add_view(CommonModelView(Room, db.session, name='Thông tin phòng', category='Phòng'))
-admin.add_view(CommonModelView(RoomType, db.session, name='Loại phòng', category='Phòng'))
-admin.add_view(CommonModelView(Bill, db.session, name='Danh sách hóa đơn', category='Hóa đơn'))
-admin.add_view(CommonModelView(Surchange, db.session, name='Phụ thu', category='Hóa đơn'))
-admin.add_view(CommonModelView(RentalVoucher, db.session, name='Phiếu thuê'))
-admin.add_view(CommonModelView(OrderVoucher, db.session, name='Phiếu đặt'))
+admin.add_view(RoomView(Room, db.session, name='Thông tin phòng', category='Phòng'))
+admin.add_view(RoomTypeView(RoomType, db.session, name='Loại phòng', category='Phòng'))
+admin.add_view(BillView(Bill, db.session, name='Danh sách hóa đơn', category='Hóa đơn'))
+admin.add_view(SurchangeView(Surchange, db.session, name='Phụ thu', category='Hóa đơn'))
+admin.add_view(RentalVoucherView(RentalVoucher, db.session, name='Phiếu thuê'))
+admin.add_view(OrderVoucherView(OrderVoucher, db.session, name='Phiếu đặt'))
 
 admin.add_view(LogoutView(name='Đăng xuất'))
 admin.add_view(StatsView(name='Thống kê báo cáo'))

@@ -4,10 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="7d6d2a85-e358-4e22-98dc-ada3258f1402" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HotelManagement/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/utils.py" afterDir="false" />
     </list>
+=======
+<<<<<<< HEAD
+    <list default="true" id="18162bcb-000d-425f-8bf5-19d2a7d04bf4" name="Changes" comment="Merge branch 'main' into feature-thanhdinh&#10;&#10;# Conflicts:&#10;#&#9;.idea/misc.xml&#10;#&#9;HotelManagement/index.py&#10;#&#9;HotelManagement/models.py&#10;#&#9;HotelManagement/templates/login.html" />
+=======
+    <list default="true" id="18162bcb-000d-425f-8bf5-19d2a7d04bf4" name="Changes" comment="Merge branch 'main' into feature-thanhdinh&#10;&#10;# Conflicts:&#10;#&#9;.idea/misc.xml&#10;#&#9;HotelManagement/index.py&#10;#&#9;HotelManagement/models.py&#10;#&#9;HotelManagement/templates/login.html">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HotelManagement/index.py" beforeDir="false" afterPath="$PROJECT_DIR$/index.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/index.html" afterDir="false" />
+    </list>
+>>>>>>> main
+>>>>>>> main
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -24,8 +36,27 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
+<<<<<<< HEAD
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/HotelManagement/admin.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/HotelManagement/templates/layout/header.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/HotelManagement/index.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/HotelManagement/utils.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/HotelManagement/templates/register.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/HotelManagement/templates/admin/stats.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/HotelManagement/__init__.py" root0="FORCE_HIGHLIGHTING" />
+=======
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/HotelManagement/templates/register.html" root0="FORCE_HIGHLIGHTING" />
+>>>>>>> main
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -40,6 +71,22 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+<<<<<<< HEAD
+    <property name="last_opened_file_path" value="$USER_HOME$/IdeaProjects/KiemTraTracNghiemTiengAnh" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+=======
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/HotelManagement/static/css" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\PyCharmProject\HotelManagement\HotelManagement\static\css" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\PyCharmProject\HotelManagement\" />
+      <recent name="D:\PyCharmProject\HotelManagement" />
+      <recent name="D:\PyCharmProject\HotelManagement\HotelManagement\templates\admin" />
+    </key>
+>>>>>>> main
   </component>
   <component name="RunManager" selected="Python.index (1)">
     <configuration name="index (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -70,12 +117,21 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
+<<<<<<< HEAD
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/HotelManagement" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/HotelManagement/index.py" />
+=======
+      <option name="SDK_HOME" value="D:\PyCharmProject\HotelManagement\venv\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/HotelManagement" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="D:\PyCharmProject\HotelManagement\index.py" />
+>>>>>>> main
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -91,9 +147,15 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
+<<<<<<< HEAD
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/HotelManagement" />
       <option name="IS_MODULE_SDK" value="true" />
+=======
+      <option name="SDK_HOME" value="D:\PyCharmProject\HotelManagement\venv\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/HotelManagement" />
+      <option name="IS_MODULE_SDK" value="false" />
+>>>>>>> main
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/HotelManagement/models.py" />
@@ -145,5 +207,6 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>

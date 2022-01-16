@@ -47,6 +47,7 @@ class Customer(User):
         return self.name
 
 
+
 class CustomerType(db.Model):
     __tablename__ = 'customer_type'
 
@@ -119,6 +120,7 @@ class Room(db.Model):
         return self.room_name
 
 
+
 class RoomType(db.Model):
     __tablename__ = 'room_type'
 
@@ -133,11 +135,13 @@ class RoomType(db.Model):
     def __str__(self):
         return self.room_type_name
 
+
 class Bill(db.Model):
     __tablename__ = 'bill'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     unit_price = Column(Float, default=0)
+
     surchage_id = Column(Integer, ForeignKey('surchange.id'), nullable=False)
     status = Column(Enum(Status), default=Status.NONE)
     rental_vouchers = relationship('RentalVoucher', backref='bill', lazy=True)
@@ -149,6 +153,7 @@ class Bill(db.Model):
 
     def __str__(self):
         return str(self.id)
+
 
 class Surchange(db.Model):
     __tablename__ = 'surchange'
@@ -168,8 +173,8 @@ class RentalVoucher(db.Model):
     customer_id = Column(Integer, ForeignKey('customer.id'), primary_key=True)
     check_in_date = Column(DateTime, default=datetime.now())
     check_out_date = Column(DateTime, default=datetime.now())
-
     bill_id = Column(Integer, ForeignKey('bill.id'), nullable=False)
+
 
     def __str__(self):
         return self.__tablename__

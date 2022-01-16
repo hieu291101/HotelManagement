@@ -1,0 +1,160 @@
+{% extends 'layout/base.html' %}
+
+{% set active_page = "user_login" %}
+
+{% block title %}Đăng ký người dùng{% endblock %}
+
+{% block content %}
+<section class="vh-100" xmlns="http://www.w3.org/1999/html">
+  <div class="container-fluid h-custom">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-md-9 col-lg-6 col-xl-5">
+        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp" class="img-fluid"
+          alt="Sample image">
+      </div>
+      <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+          <form method="post" action="{{ url_for('user_register') }}" enctype="multipart/form-data">
+              <h2 class="text-center">ĐĂNG KÝ </h2>
+              <br/>
+              <!--name and username-->
+              <div class="row">
+                <!-- Full name -->
+				<div class="form-group col-6 mb4 form-outline">
+				  <label for="name">Họ và tên:</label>
+				  <input required
+                         type="text"
+                         class="form-control"
+                         id="name"
+                         name="name"
+                         placeholder="Nhập họ và tên..."/>
+				</div>
+                <!-- user name-->
+				<div class="form-group col-6">
+				  <label for="username">Tên đăng nhập:</label>
+				  <input required
+                         type="text"
+                         class="form-control"
+                         id="username"
+                         name="username"
+                         placeholder="Nhập tên đăng nhập..."/>
+				</div>
+              </div>
+
+              <!--Identity and Phone-->
+              <div class="row">
+                <!--Identity-->
+                <div class="form-group col-6">
+                  <label for="identity">Chứng minh thư:</label>
+                  <input required
+                         type="text"
+                         class="form-control"
+                         placeholder="Nhập số chứng minh..."
+                         id="identity"
+                         name="identity"/>
+                </div>
+                <!--Phone number-->
+                <div class="form-group col-6">
+                  <label for="phone">Số điện thoại:</label>
+                  <input required
+                         type="tel"
+                         class="form-control"
+                         placeholder="Nhập số điện thoại..."
+                         id="phone"
+                         name="phone"/>
+                </div>
+              </div>
+
+              <!--Nationality, Gender, Avatar-->
+              <div class="row">
+                <!--Nationality-->
+                <div class="form-group col-3">
+                    <label for="nationality">Quốc tịch</label>
+                    <select class="form-control" id="nationality" name="nationality">
+                      <option>Việt Nam</option>
+                      <option>Khác</option>
+                    </select>
+                </div>
+                <!--Gender-->
+                <div class="form-group col-3">
+                    <label for="gender">Giới tính</label>
+                    <select class="form-control" id="gender" name="gender">
+                      <option>Nam</option>
+                      <option>Nữ</option>
+                      <option>Khác</option>
+                    </select>
+                </div>
+                <!--Avatar-->
+                <div class="form-group col-6">
+                  <label for="avatar">Ảnh đại diện</label>
+                  <input type="file"
+                         class="form-control"
+                         placeholder="Chọn ảnh"
+                         id="avatar"
+                         name="avatar"/>
+                </div>
+              </div>
+
+              <!--Email-->
+              <div class="form-group">
+              <label for="email">Email:</label>
+              <input required
+                     type="email"
+                     class="form-control"
+                     placeholder="Nhập email..."
+                     id="email"
+                     name="email"/>
+            </div>
+
+              <!--Address-->
+              <div class="form-group">
+                <label for="address">Địa chỉ:</label>
+                <input required
+                       type="text"
+                       class="form-control"
+                       placeholder="Nhập địa chỉ..."
+                       id="address"
+                       name="address"/>
+              </div>
+
+              <!--password-->
+              <div class="form-group">
+                <label for="password">Nhập mật khẩu:</label>
+                <input required
+                       type="password"
+                       class="form-control"
+                       placeholder="Nhập mật khẩu..."
+                       id="password"
+                       name="password">
+              </div>
+
+              <!--Confirm password-->
+              <div class="form-group">
+                <label for="confirmpassword">Xác nhận mật khẩu:</label>
+                <input required
+                       type="password"
+                       class="form-control"
+                       placeholder="Nhập lại mật khẩu..."
+                       id="confirmpassword"
+                       name="confirmpassword">
+              </div>
+
+              <!--Check box-->
+              <div class="form-group form-check">
+                <label class="form-check-label">
+                  <input required class="form-check-input" type="checkbox">
+                    Đồng ý với các <a href="#">điều khoản và bảo mật</a> của chúng tôi.
+                </label>
+              </div>
+              <button type="submit" class="btn btn-primary btn-lg btn-block">Đăng ký</button>
+              <br/>
+              <div class="small fw-bold mt-2 pt-1 mb-0 text-center">
+                <p>Đã có tài khoản? <a href="{{ url_for('user_login') }}">Đăng nhập</a>.</p>
+              </div>
+          </form>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

@@ -74,7 +74,7 @@ html, body {
 
 .carousel-caption h3 {
     text-shadow: 2px 0 0 #fff, -2px 0 0 #fff, 0 2px 0 #fff, 0 -2px 0 #fff, 1px 1px #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
-    color: #228B22;
+    color: #222;
 }
 
 .carousel-inner img {
@@ -84,7 +84,7 @@ html, body {
 }
 
 .booking {
-    background-color: #228B22;
+    background-color: #007bff;
     padding: 3rem;
 }
 
@@ -128,7 +128,7 @@ input[type=number] {
 }
 
 .booking-btn:hover {
-    color: #228B22;
+    color: #007bff;
     border: 3px solid transparent;
     background: white;
 }

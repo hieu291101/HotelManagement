@@ -4,20 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="18162bcb-000d-425f-8bf5-19d2a7d04bf4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/HotelManagement.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/HotelManagement.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/index.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/index.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/templates/admin/stats.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/admin/stats.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/templates/layout/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/layout/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/templates/layout/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/layout/header.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/utils.py" afterDir="false" />
+    <list default="true" id="18162bcb-000d-425f-8bf5-19d2a7d04bf4" name="Changes" comment="Merge branch 'main' into feature-thanhdinh&#10;&#10;# Conflicts:&#10;#&#9;.idea/misc.xml&#10;#&#9;HotelManagement/index.py&#10;#&#9;HotelManagement/models.py&#10;#&#9;HotelManagement/templates/login.html">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,8 +26,8 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/HotelManagement/admin.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/HotelManagement/utils.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/HotelManagement/templates/admin/stats.html" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/HotelManagement/templates/register.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/HotelManagement/templates/admin/stats.html" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -55,6 +43,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$USER_HOME$/IdeaProjects/KiemTraTracNghiemTiengAnh" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunManager" selected="Python.index">
     <configuration name="index" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">

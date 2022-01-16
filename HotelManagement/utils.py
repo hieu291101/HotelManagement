@@ -1,5 +1,9 @@
-import datetime
 import hashlib
+from sqlalchemy import text, extract, func, join
+from HotelManagement import db
+from HotelManagement.models import User, RentalVoucher, Room, Surchange, Bill, RoomType
+from HotelManagement.models import User, Customer
+from HotelManagement import db
 
 from sqlalchemy import text, extract, func
 
@@ -50,6 +54,7 @@ def add_customer(name, username, email, phone, identity, nationality,
                         avatar=kwargs.get('avatar'))
     db.session.add(customer)
     db.session.commit()
+
 
 def load_rental_voucher():
     return db.session.query(Room.room_name, Customer.name, RentalVoucher.check_in_date, RentalVoucher.check_out_date, RentalVoucher.bill_id)\

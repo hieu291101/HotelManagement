@@ -1,9 +1,4 @@
 function addToOrder(id, room_type_name, capacity, price){
-    let room-left = document.getElementById('room-left')
-    if(data.quantity >= room-left) {
-        alert("Đã chọn tối đa loại phòng");
-        return;
-    }
 
     fetch('/api/add-order', {
         method: 'post',

@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey
+import enum
+from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Enum
 from sqlalchemy.orm import relationship, backref
 from HotelManagement import db
 from datetime import datetime
@@ -43,7 +44,8 @@ class Customer(User):
     }
 
     def __str__(self):
-        return self.id
+        return self.name
+
 
 
 class CustomerType(db.Model):
@@ -51,7 +53,7 @@ class CustomerType(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     customer_type = Column(String(20), default='Nội địa')
-    customer_index = Column(Integer, nullable=False, default=1)
+    customer_index = Column(Float, nullable=False, default=1)
     customers = relationship("Customer", backref='customer_type', lazy=True)
 
     def __str__(self):
@@ -98,22 +100,25 @@ class Administrator(User):
         'polymorphic_identity': 'administrator'
     }
 
+class Status(enum.Enum):
+    DONE = 'Xong'
+    NONE = 'Chưa'
 
 class Room(db.Model):
     __tablename__ = 'room'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     room_name = Column(String(30), nullable=False)
-    status = Column(Boolean, default=True)
+    status = Column(Enum(Status), default=Status.NONE)
     capacity = Column(Integer, nullable=False, default=0)  # số người trên phòng
-    description = Column(String(255))
 
     room_type_id = Column(Integer, ForeignKey('room_type.id'), nullable=False)
     rental_vouchers = relationship('RentalVoucher', backref='room', lazy=True)
     order_vouchers = relationship('OrderVoucher', backref='room', lazy=True)
 
     def __str__(self):
-        return self.id
+        return self.room_name
+
 
 
 class RoomType(db.Model):
@@ -121,6 +126,7 @@ class RoomType(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     room_type_name = Column(String(50), nullable=False)
+    description = Column(String(255))
     maximum_customer = Column(Integer, nullable=False)
     price = Column(Integer, nullable=False)
 
@@ -137,13 +143,16 @@ class Bill(db.Model):
     unit_price = Column(Float, default=0)
 
     surchage_id = Column(Integer, ForeignKey('surchange.id'), nullable=False)
-    rental_voucher = relationship('RentalVoucher', backref=backref('bill', uselist=False, lazy=True),
-                                  foreign_keys='[RentalVoucher.bill_id]', uselist=False, lazy=True)
-    order_voucher = relationship('OrderVoucher', backref=backref('bill', uselist=False, lazy=True),
-                                 foreign_keys='[OrderVoucher.bill_id]', uselist=False, lazy=True)
+    status = Column(Enum(Status), default=Status.NONE)
+    rental_vouchers = relationship('RentalVoucher', backref='bill', lazy=True)
+    order_vouchers = relationship('OrderVoucher', backref='bill', lazy=True)
+    # rental_voucher = relationship('RentalVoucher', backref=backref('bill', uselist=False, lazy=True),
+    #                               foreign_keys='[RentalVoucher.bill_id]', uselist=False, lazy=True)
+    # order_voucher = relationship('OrderVoucher', backref=backref('bill', uselist=False, lazy=True),
+    #                              foreign_keys='[OrderVoucher.bill_id]', uselist=False, lazy=True)
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
 class Surchange(db.Model):
@@ -164,9 +173,11 @@ class RentalVoucher(db.Model):
     customer_id = Column(Integer, ForeignKey('customer.id'), primary_key=True)
     check_in_date = Column(DateTime, default=datetime.now())
     check_out_date = Column(DateTime, default=datetime.now())
+    bill_id = Column(Integer, ForeignKey('bill.id'), nullable=False)
 
-    bill_id = Column(Integer, ForeignKey('bill.id'), nullable=True)
 
+    def __str__(self):
+        return self.__tablename__
 
 class OrderVoucher(db.Model):
     __tablename__ = 'order_voucher'

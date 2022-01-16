@@ -1,0 +1,105 @@
+.body {
+
+}
+
+h3, h4 {
+    color: #25396f;
+}
+
+.logo a{
+    text-decoration: none;
+    font-size: 1.5rem;
+    color: #777;
+}
+
+.logo:hover a{
+    text-decoration: none
+}
+
+.font-semibold {
+    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tooltip {
+  /* visibility: hidden; */
+  display: none;
+  position: absolute;
+  top: 10;
+  left: 0;
+  background-color: #fff;
+  padding: 10px;
+  -webkit-box-shadow: 0 0 20px 0 rgba(0,0,0,0.1);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+
+.font-semibold:hover + .tooltip {
+  /*visibility: visible; */
+  display: initial;
+  transition: opacity 1s ease;
+  opacity: 1;
+}
+
+.table {
+    border-radius: 20px;
+}
+
+.sidebar-wrapper {
+    z-index: 9999999;
+}
+
+#main {
+    background-color: #f2f7ff;
+}
+
+.card-header {
+    background-color: white;
+}
+
+.card-header h4 {
+    margin-top: .8rem;
+}
+
+.staff-profile {
+    padding-left: 1.6rem;
+    max-width: calc(100% - 2rem);
+}
+
+.staff-profile h6 {
+    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.input-group-search-rental{
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: white;
+}
+
+.input-group-search-rental button {
+    margin-left: auto;
+}
+
+.form-outline {
+    display: flex;
+    flex: 1;
+    align-items: center;
+}
+
+.form-outline label {
+    font-weight: 600;
+    margin-right: 1rem;
+}
+
+.form-outline input {
+    width: 100%;
+    margin-right: .5rem;
+}
+
+.dropdown-toggle{
+    color: #222 !important;
+}

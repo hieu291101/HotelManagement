@@ -1,0 +1,406 @@
+{% extends 'layout/base.html' %}
+
+{% set active_page = "staff_page" %}
+
+{% block title %}Nhân viên BookingHotel{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bold.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/perfect-scrollbar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-icons.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/staff.css') }}">
+{% endblock %}
+
+{% block content %}
+<div id="app">
+    <div id="sidebar" class="active">
+        <div class="sidebar-wrapper active">
+            <div class="sidebar-header">
+                <div class="d-flex justify-content-between">
+                    <div class="logo">
+                        <a href="{{ url_for('home') }}">BookingHotel.com</a>
+                    </div>
+                    <div class="toggler">
+                        <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <ul class="menu">
+                    <li class="sidebar-title">Menu</li>
+
+                    <li
+                            class="sidebar-item active ">
+                        <a href="{{ url_for('staff_page') }}" class='sidebar-link'>
+
+                            <span>Bảng phiếu thuê</span>
+                        </a>
+                    </li>
+
+                    <li
+                            class="sidebar-item ">
+                        <a href="{{ url_for('staff_page_order') }}" class='sidebar-link'>
+
+                            <span>Bảng phiếu đặt</span>
+                        </a>
+                    </li>
+
+                    <li
+                            class="sidebar-item">
+                        <a href="{{ url_for('user_logout') }}" class='sidebar-link'>
+
+                            <span>Đăng xuất</span>
+                        </a>
+                    </li>
+            </div>
+            <button class="sidebar-toggler btn x">Hidden<</button>
+        </div>
+    </div>
+    <div id="main" class="vh-100">
+        <header class="mb-3">
+            <a href="#" class="burger-btn d-block d-xl-none">
+                <i class="bi bi-justify fs-3"></i>
+            </a>
+        </header>
+
+        <div class="page-heading">
+            <h3>Bảng phiếu thuê</h3>
+        </div>
+        <div class="page-content">
+            <section class="row">
+                <div class="col-12 col-lg-9">
+                    <div class="row">
+                        <div class="col-6 col-lg-4 col-md-6">
+                            <div class="card">
+                                <div class="card-body px-3 py-4-5">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="stats-icon purple">
+                                                <i class="iconly-boldShow"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <h6 class="text-muted font-semibold">Số phiếu thuê</h6>
+                                            <span class='tooltip'>Số phiếu thuê được lưu</span>
+                                            <h6 class="font-extrabold mb-0">{{ rental_voucher|length }}</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-lg-4 col-md-6">
+                            <div class="card">
+                                <div class="card-body px-3 py-4-5">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="stats-icon blue">
+                                                <i class="iconly-boldProfile"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <h6 class="text-muted font-semibold">Thuê trong ngày</h6>
+                                            <span class='tooltip'>Số lượng phiếu thuê trong ngày</span>
+                                            <h6 class="font-extrabold mb-0">{{ rental_voucher|length }}</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-lg-4 col-md-6">
+                            <div class="card">
+                                <div class="card-body px-3 py-4-5">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="stats-icon green">
+                                                <i class="iconly-boldAdd-User"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <h6 class="text-muted font-semibold">Phòng còn lại</h6>
+                                            <span class='tooltip'>Số lượng phòng còn trống</span>
+                                            <h6 class="font-extrabold mb-0">{{ room_left|length }}</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <form class="input-group input-group-search-rental">
+                                <div class="form-outline">
+                                    <label class="form-label" for="form1" >Search</label>
+                                    <input type="search" id="form1" class="form-control" name="keyword" placeholder="Nhập tên khách hàng hoặc CMND..."/>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Phiếu thuê</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div id="chart-profile-visit"></div>
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Tên phòng</th>
+                                            <th scope="col">Tên khách hàng</th>
+                                            <th scope="col">Loại khách</th>
+                                            <th scope="col">CMND</th>
+                                            <th scope="col">Ngày thuê</th>
+                                            <th scope="col">Ngày trả</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        {% for t in rental_voucher_by %}
+                                        <tr>
+                                            <form>
+                                                <th scope="col">{{ loop.index }}</th>
+                                                <td >{{ t[0] }}</td>
+                                                <td>
+                                                    {{ t[1] }}
+<!--                                                    <div class="dropdown">-->
+<!--                                                        <a class="page-link btn btn-light dropdown-toggle" href="{{ url_for('staff_page', roomname=t[0], customername=t[1]) }}" data-toggle="dropdown">{{ t[1] }}</a>-->
+<!--                                                        <div class="dropdown-menu">-->
+<!--                                                            {% for c in customer %}-->
+<!--                                                            <div class="dropdown-item">{{ c[0] }}</div>-->
+<!--                                                            {% endfor %}-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+                                                </td>
+                                                <td>{{ t[2] }}</td>
+                                                <td>{{ t[3] }}</td>
+                                                <td name="cmnd">{{ t[4] }}</td>
+                                                <td>{{ t[5] }}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-primary">Thanh toán</button>
+                                                </td>
+                                            </form>
+                                        </tr>
+                                        {% endfor %}
+
+                                        </tbody>
+                                    </table>
+                                    <ul class="pagination">
+                                        {% if pages > 1 %}
+                                        {% for idx in range(1, pages + 1) %}
+                                            <li class="page-item"><a class="page-link" href="{{ url_for('staff_page', page=idx) }}">{{ idx }}</a></li>
+                                        {% endfor %}
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<!--                    <div class="row">-->
+<!--                        <div class="col-12 col-xl-4">-->
+<!--                            <div class="card">-->
+<!--                                <div class="card-header">-->
+<!--                                    <h4>Profile Visit</h4>-->
+<!--                                </div>-->
+<!--                                <div class="card-body">-->
+<!--                                    <div class="row">-->
+<!--                                        <div class="col-6">-->
+<!--                                            <div class="d-flex align-items-center">-->
+<!--                                                <svg class="bi text-primary" width="32" height="32" fill="blue"-->
+<!--                                                     style="width:10px">-->
+<!--                                                    <use-->
+<!--                                                            xlink:href="assets/vendors/bootstrap-icons/bootstrap-icons.svg#circle-fill"/>-->
+<!--                                                </svg>-->
+<!--                                                <h5 class="mb-0 ms-3">Europe</h5>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-6">-->
+<!--                                            <h5 class="mb-0">862</h5>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-12">-->
+<!--                                            <div id="chart-europe"></div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="row">-->
+<!--                                        <div class="col-6">-->
+<!--                                            <div class="d-flex align-items-center">-->
+<!--                                                <svg class="bi text-success" width="32" height="32" fill="blue"-->
+<!--                                                     style="width:10px">-->
+<!--                                                    <use-->
+<!--                                                            xlink:href="assets/vendors/bootstrap-icons/bootstrap-icons.svg#circle-fill"/>-->
+<!--                                                </svg>-->
+<!--                                                <h5 class="mb-0 ms-3">America</h5>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-6">-->
+<!--                                            <h5 class="mb-0">375</h5>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-12">-->
+<!--                                            <div id="chart-america"></div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="row">-->
+<!--                                        <div class="col-6">-->
+<!--                                            <div class="d-flex align-items-center">-->
+<!--                                                <svg class="bi text-danger" width="32" height="32" fill="blue"-->
+<!--                                                     style="width:10px">-->
+<!--                                                    <use-->
+<!--                                                            xlink:href="assets/vendors/bootstrap-icons/bootstrap-icons.svg#circle-fill"/>-->
+<!--                                                </svg>-->
+<!--                                                <h5 class="mb-0 ms-3">Indonesia</h5>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-6">-->
+<!--                                            <h5 class="mb-0">1025</h5>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-12">-->
+<!--                                            <div id="chart-indonesia"></div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="col-12 col-xl-8">-->
+<!--                            <div class="card">-->
+<!--                                <div class="card-header">-->
+<!--                                    <h4>Latest Comments</h4>-->
+<!--                                </div>-->
+<!--                                <div class="card-body">-->
+<!--                                    <div class="table-responsive">-->
+<!--                                        <table class="table table-hover table-lg">-->
+<!--                                            <thead>-->
+<!--                                            <tr>-->
+<!--                                                <th>Name</th>-->
+<!--                                                <th>Comment</th>-->
+<!--                                            </tr>-->
+<!--                                            </thead>-->
+<!--                                            <tbody>-->
+<!--                                            <tr>-->
+<!--                                                <td class="col-3">-->
+<!--                                                    <div class="d-flex align-items-center">-->
+<!--                                                        <div class="avatar avatar-md">-->
+<!--                                                            <img src="assets/images/faces/5.jpg">-->
+<!--                                                        </div>-->
+<!--                                                        <p class="font-bold ms-3 mb-0">Si Cantik</p>-->
+<!--                                                    </div>-->
+<!--                                                </td>-->
+<!--                                                <td class="col-auto">-->
+<!--                                                    <p class=" mb-0">Congratulations on your graduation!</p>-->
+<!--                                                </td>-->
+<!--                                            </tr>-->
+<!--                                            <tr>-->
+<!--                                                <td class="col-3">-->
+<!--                                                    <div class="d-flex align-items-center">-->
+<!--                                                        <div class="avatar avatar-md">-->
+<!--                                                            <img src="assets/images/faces/2.jpg">-->
+<!--                                                        </div>-->
+<!--                                                        <p class="font-bold ms-3 mb-0">Si Ganteng</p>-->
+<!--                                                    </div>-->
+<!--                                                </td>-->
+<!--                                                <td class="col-auto">-->
+<!--                                                    <p class=" mb-0">Wow amazing design! Can you make another tutorial-->
+<!--                                                        for-->
+<!--                                                        this design?</p>-->
+<!--                                                </td>-->
+<!--                                            </tr>-->
+<!--                                            </tbody>-->
+<!--                                        </table>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+                <div class="col-12 col-lg-3">
+                    <div class="card">
+                        <div class="card-body py-4 px-5">
+                            <div class="d-flex align-items-center staff-profile-wrapper">
+                                <div class="avatar avatar-xl">
+                                    {% if current_user.avatar %}
+                                    <img src="{{ current_user.avatar }}" width="30px" height="30px"
+                                         alt="{{ current_user.name }}" class="rounded-circle"/>
+                                    {% else %}
+                                    <img src="{{ url_for('static', filename='img/background.jpg') }}" width="30px"
+                                         height="30px" alt="{{ current_user.name }}" class="rounded-circle"/>
+                                    {% endif %}
+                                </div>
+                                <div class="ms-3 name staff-profile">
+                                    <h5 class="font-bold">{{ current_user.name }}</h5>
+                                    <h6 class="text-muted mb-0">{{ current_user.email }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<!--                    <div class="card">-->
+<!--                        <div class="card-header">-->
+<!--                            <h4>Phòng Thuê Gần Đây</h4>-->
+<!--                        </div>-->
+<!--                        <div class="card-content pb-4">-->
+<!--                            <div class="recent-message d-flex px-4 py-3">-->
+<!--                                <div class="avatar avatar-lg">-->
+<!--                                    <img src="assets/images/faces/4.jpg">-->
+<!--                                </div>-->
+<!--                                <div class="name ms-4">-->
+<!--                                    <h5 class="mb-1">Hank Schrader</h5>-->
+<!--                                    <h6 class="text-muted mb-0">@johnducky</h6>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="recent-message d-flex px-4 py-3">-->
+<!--                                <div class="avatar avatar-lg">-->
+<!--                                    <img src="assets/images/faces/5.jpg">-->
+<!--                                </div>-->
+<!--                                <div class="name ms-4">-->
+<!--                                    <h5 class="mb-1">Dean Winchester</h5>-->
+<!--                                    <h6 class="text-muted mb-0">@imdean</h6>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="recent-message d-flex px-4 py-3">-->
+<!--                                <div class="avatar avatar-lg">-->
+<!--                                    <img src="assets/images/faces/1.jpg">-->
+<!--                                </div>-->
+<!--                                <div class="name ms-4">-->
+<!--                                    <h5 class="mb-1">John Dodol</h5>-->
+<!--                                    <h6 class="text-muted mb-0">@dodoljohn</h6>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="px-4">-->
+<!--                                <button class='btn btn-block btn-xl btn-light-primary font-bold mt-3'>Start-->
+<!--                                    Conversation-->
+<!--                                </button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="card">-->
+<!--                        <div class="card-header">-->
+<!--                            <h4>Visitors Profile</h4>-->
+<!--                        </div>-->
+<!--                        <div class="card-body">-->
+<!--                            <div id="chart-visitors-profile"></div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<script src="assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+
+<script src="assets/vendors/apexcharts/apexcharts.js"></script>
+<script src="assets/js/pages/dashboard.js"></script>
+
+<script src="assets/js/mazer.js"></script>
+
+<div class="body flex-grow-1 px-3">
+    <div class="container-lg">
+        <div class="row">
+
+        </div>
+    </div>
+    {% endblock %}
+

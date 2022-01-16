@@ -5,7 +5,7 @@ from sqlalchemy import null
 
 from HotelManagement import app, login
 from HotelManagement.admin import *
-import utils
+from HotelManagement import utils
 import cloudinary.uploader
 from flask_login import login_user
 from flask import render_template, request, redirect, flash, url_for, session, jsonify

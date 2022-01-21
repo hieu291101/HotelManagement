@@ -1,10 +1,13 @@
 import hashlib
+
+from flask import session
 from sqlalchemy import text, extract, func, join
 from HotelManagement import db
 from HotelManagement.models import User, RentalVoucher, Room, Surchange, Bill, RoomType
 from HotelManagement.models import User, Customer
 from HotelManagement import db
 
+from flask_login import current_user
 from sqlalchemy import text, extract, func
 
 from HotelManagement.models import User, Customer, RentalVoucher, OrderVoucher, Room, Bill, Surchange, CustomerType, \
@@ -15,6 +18,11 @@ from HotelManagement import db, app
 
 def get_user_by_id(user_id):
     return User.query.get(user_id)
+
+def get_customer_by_cmnd(cmnd=None):
+    if cmnd:
+        cmnd = cmnd.strip()
+        return Customer.query.filter(Customer.id_number.__eq__(cmnd))
 
 
 def check_login(username, password):
@@ -31,6 +39,14 @@ def check_date(orderdate, checkindate):
         if delta.days > 28:
             return False
     return True
+
+def update_customer(name, username, email, phone, identity, nationality,
+                 gender, address, password, **kwargs):
+    customer=Customer.query.filter(Customer.id_number.__eq__(identity))
+    customer=customer.update({Customer.name: name, Customer.email: email,
+                              Customer.phone_number: phone, Customer.id_number: identity, Customer.nationality: nationality,
+                              Customer.gender: gender, Customer.address: address})
+
 
 
 def add_customer(name, username, email, phone, identity, nationality,
@@ -224,9 +240,61 @@ def count_stats(month, kw=None):
 
     return i.all()
 
-# def add_order(order):
-#     if order:
-#         order_voucher = OrderVoucher()
+def add_order(name, username, email, phone, identity, nationality,
+                 gender, address, password, room_id,  check_in_date, check_out_date, **kwargs):
+
+
+        add_customer(name=name, username=username, email=email, phone=phone,identity=identity, password=password
+                     , nationality=nationality,gender=gender, address=address)
+        bill = Bill(surchage_id=1)
+        order_voucher = OrderVoucher( room_id=room_id, customer_id= get_customer_by_cmnd(cmnd=identity), check_in_date=check_in_date,
+                                      check_out_date=check_out_date, bill_id=bill)
+
+        db.session.add(order_voucher)
+        db.session.commit()
+
+def load_room_order(from_date=None, to_date=None, room_type=None,page=1):
+    room = db.session.query(Room.id).select_from(Room)\
+        .join(Room.order_vouchers) \
+
+
+    if from_date:
+        room = room.filter(OrderVoucher.check_out_date.__ge__(from_date))
+    if to_date:
+        room = room.filter(OrderVoucher.check_in_date.__le__(to_date))
+
+    room1 = db.session.query(RoomType.room_type_name, RoomType.maximum_customer, RoomType.price, Room.id, Room.status,
+                             Room.room_name) \
+        .join(RoomType, Room.room_type_id.__eq__(RoomType.id))
+
+    room1 = room1.filter(~Room.id.in_(room))
+
+
+    # if room_type:
+    #     room1 = room1.filter(Customer.name.contains(room_type))
+
+    session['counter_room_to_order'] = room1.count()
+
+    page_size = app.config['PAGE_SIZE_ROOM_ORDER']
+    start = (page - 1) * page_size
+    end = start + page_size
+
+    return room1.slice(start, end).all();
+
+
+def load_room_by(room_name=None):
+    room = db.session.query( Room.id, Room.status,
+                            Room.room_name) \
+
+    if room_name:
+        room = room.filter(Room.room_name.__eq__(room_name))
+
+    return room.all();
+
+# def load_room_not_in(room_id=None):
+
+# def add_order_voucher()
+
 
 # def add_order_voucher()
 

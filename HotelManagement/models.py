@@ -10,8 +10,8 @@ class User(db.Model, UserMixin):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String(50), nullable=False, unique=True)
-    password = Column(String(50), nullable=False)
+    username = Column(String(50), unique=True)
+    password = Column(String(50))
     login_status = Column(Boolean, default=True)
     register_date = Column(DateTime, default=datetime.now())
     avatar = Column(String(100))

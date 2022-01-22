@@ -22,3 +22,81 @@ function addToOrder(id, room_type_name, capacity, price){
         console.error(err)
     })
 }
+
+function addOrderVoucher(roomName) {
+    let name = document.getElementsByName('name')
+    let email = document.getElementsByName('email')
+    let phone = document.getElementsByName('phone')
+    let identity = document.getElementsByName('identity')
+    let nationality = document.getElementsByName('nationality')
+    let gender = document.getElementsByName('gender')
+    let address = document.getElementsByName('address')
+    let check_in_date = document.getElementsByName('checkindate')
+    let check_out_date = document.getElementsByName('checkoutdate')
+    fetch('/api/order-voucher', {
+        method: 'post',
+        body: JSON.stringify({
+            'room_name': roomName,
+            'name': name[0].value,
+            'email': email[0].value,
+            'phone': phone[0].value,
+            'identity': identity[0].value,
+            'nationality': nationality[0].value,
+            'gender': gender[0].value,
+            'address': address[0].value,
+            'check_in_date': check_in_date[0].value,
+            'check_out_date': check_out_date[0].value
+        }),
+        headers: {
+            'Content-Type':' application/json'
+        }
+    }).then(res => res.json()).then(data => {
+        if (data.status == 201) {
+            let o = data.order
+            alert(o.room_id)
+        } else if (data.status == 404)
+            alert(data.err_msg)
+    })
+}
+
+function updateStatusBill(billId) {
+
+    fetch('/api/payment', {
+        method: 'post',
+        body: JSON.stringify({
+            'bill_id': billId
+        }),
+        headers: {
+            'Content-Type':' application/json'
+        }
+    }).then(res => res.json()).then(data => {
+        if (data.status == 201) {
+            alert('Thanh toán thành công')
+            location.reload()
+        } else if (data.status == 404)
+            alert(data.err_msg)
+    })
+}
+
+function moveOrderToRental(roomName, customerName, checkInDate, checkOutDate, billId) {
+
+    fetch('/api/order-to-rental', {
+        method: 'post',
+        body: JSON.stringify({
+            'room_name': roomName,
+            'customer_name': customerName,
+            'check_in_date': checkInDate,
+            'check_out_date': checkOutDate,
+            'bill_id': billId
+        }),
+        headers: {
+            'Content-Type':' application/json'
+        }
+    }).then(res => res.json()).then(data => {
+        if (data.status == 201) {
+            alert('Thuê thành công')
+            location.reload()
+        } else if (data.status == 404)
+            alert(data.err_msg)
+    })
+}

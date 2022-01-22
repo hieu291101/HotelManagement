@@ -164,7 +164,7 @@
                                                 {{ t[0] }}
                                             </td>
                                             <td>
-                                                <a class="btn btn-primary" href="{{ url_for('room_to_order', roomname=t[5]) }}">Đặt phòng</a>
+                                                <button type="button" class="btn btn-primary" onclick="addOrderVoucher('{{ t[5] }}')">Đặt phòng</button>
                                             </td>
                                         </form>
                                     </tr>

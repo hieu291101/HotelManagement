@@ -2,7 +2,7 @@ import datetime
 
 import math
 
-from flask_login import login_user
+from flask_login import login_user, login_required
 from sqlalchemy import null
 
 
@@ -145,20 +145,20 @@ def room_to_order():
 
     page = request.args.get('page', 1)
     keyword = request.args.get('keyword')
-    roomname =request.args.get('roomname')
-    roomid = utils.load_room_by(roomname)
-
-    if utils.get_customer_by_cmnd(session.get('identity')):
-        utils.update_customer(name=session.get('name'), username=session.get('identity'), email=session.get('email'),
-                              phone=session.get('phone'), identity=session.get('identity'),
-                              nationality=session.get('nationality'),
-                              gender=session.get('gender'), address=session.get('address'), password=" ")
-    else:
-        utils.add_order(name=session.get('name'), username=session.get('identity'), email=session.get('email'),
-                        phone=session.get('phone'), identity=session.get('identity'),
-                        nationality=session.get('nationality'),
-                        gender=session.get('gender'), address=session.get('address'), password=" ", room_id=roomid,
-                        check_in_date=session.get('checkindate'), check_out_date=session.get('checkoutdate'))
+    # roomname =request.args.get('roomname')
+    # roomid = utils.load_room_by(roomname)
+    #
+    # if utils.get_customer_by_cmnd(session.get('identity')):
+    #     utils.update_customer(name=session.get('name'), username=session.get('identity'), email=session.get('email'),
+    #                           phone=session.get('phone'), identity=session.get('identity'),
+    #                           nationality=session.get('nationality'),
+    #                           gender=session.get('gender'), address=session.get('address'), password=" ")
+    # else:
+    #     utils.add_order(name=session.get('name'), username=session.get('identity'), email=session.get('email'),
+    #                     phone=session.get('phone'), identity=session.get('identity'),
+    #                     nationality=session.get('nationality'),
+    #                     gender=session.get('gender'), address=session.get('address'), password=" ", room_id=roomid,
+    #                     check_in_date=session.get('checkindate'), check_out_date=session.get('checkoutdate'))
 
 
     room_to_order = utils.load_room_order(session.get('checkindate'), session.get('checkoutdate'),page=int(page))
@@ -166,6 +166,66 @@ def room_to_order():
 
     return render_template('room.html',room_to_order=room_to_order, pages=math.ceil(counter / app.config['PAGE_SIZE_ROOM_ORDER']))
 
+@app.route('/api/order-voucher', methods=['post'])
+@login_required
+def add_order_voucher():
+    data = request.json
+    name = data.get('name')
+    email = data.get('email')
+    phone = data.get('phone')
+    identity = data.get('identity')
+    nationality = data.get('nationality')
+    gender = data.get('gender')
+    address = data.get('address')
+    room_name= data.get('room_name')
+    check_in_date = data.get('check_in_date')
+    check_out_date = data.get('check_out_date')
+
+    room_id = utils.load_room_by(room_name)
+    try:
+        o = utils.add_order(name=name, username=identity, email=email,
+                        phone=phone, identity=identity,
+                        nationality=nationality, gender=gender,
+                        address=address, password=" ", room_id=room_id,
+                        check_in_date=check_in_date, check_out_date=check_out_date)
+    except:
+        return {'status': 404, 'err_msg': 'Chuong trinh dang bi loi!!!'}
+
+    return {'status': 201, 'order': {
+        'room_id': o.room_id,
+        'customer_name': o.customer_id
+    }}
+
+@app.route('/api/payment', methods=['post'])
+@login_required
+def update_bill():
+    data = request.json
+    bill_id = data.get('bill_id')
+
+    try:
+        b = utils.change_bill_status(bill_id=bill_id)
+    except:
+        return {'status': 404, 'err_msg': 'Chuong trinh dang bi loi!!!'}
+
+    return {'status': 201}
+
+@app.route('/api/order-to-rental', methods=['post'])
+@login_required
+def order_to_rental():
+    data = request.json
+    room_name = data.get('room_name')
+    customer_name = data.get('customer_name')
+    check_in_date = data.get('check_in_date')
+    check_out_date = data.get('check_out_date')
+    bill_id = data.get('bill_id')
+
+    try:
+        o = utils.move_order_to_rental(room_name=room_name, customer_name=customer_name,check_in_date=check_in_date,
+                                       check_out_date=check_out_date, bill_id=bill_id)
+    except:
+        return {'status': 404, 'err_msg': 'Chuong trinh dang bi loi!!!'}
+
+    return {'status': 201}
 
 @app.route('/user-register', methods=['get', 'post'])
 def user_register():

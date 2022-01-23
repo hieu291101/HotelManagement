@@ -14,7 +14,6 @@ class AuthenticationBaseView(BaseView):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.type == 'administrator'
 
-
 class CommonModelView(ModelView):
     can_view_details = True
     can_export = True
@@ -23,6 +22,10 @@ class CommonModelView(ModelView):
 
     # def is_accessible(self):
     #     return current_user.is_authenticated and current_user.type == 'administrator'
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3cbe540da6940ae3184f33a4444e9e07e81d8b8b
 
 
 class AdminView(CommonModelView):
@@ -154,7 +157,7 @@ class LogoutView(AuthenticationBaseView):
         return redirect('/admin')
 
 
-class StatsView(AuthenticationBaseView):
+class StatsView(BaseView):
     @expose('/')
     def index(self):
         from_date = request.args.get('from_date')

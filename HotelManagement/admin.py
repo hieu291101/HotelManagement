@@ -24,7 +24,6 @@ class CommonModelView(ModelView):
     #     return current_user.is_authenticated and current_user.type == 'administrator'
 
 
-
 class AdminView(CommonModelView):
     column_exclude_list = ['type']
     column_labels = {

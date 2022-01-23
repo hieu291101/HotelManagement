@@ -89,6 +89,7 @@ def utility_processor():
         return  counter - counter_room_full
     return dict(count_room_by_room_type=count_room_by_room_type, order_stats=utils.count_order(session.get('order')))
 
+
 @app.route('/user-register', methods=['get', 'post'])
 def user_register():
     if request.method.__eq__('POST'):
@@ -220,6 +221,7 @@ def staff_page_order():
                            order_voucher_by=order_voucher_by,
                            pages=math.ceil(counter / app.config['PAGE_SIZE']))
 
+
 @app.route('/api/add-order', methods=['post'])
 def add_to_order():
     data = request.json
@@ -285,6 +287,7 @@ def order_detail():
 #         return jsonify({'code', 200})
 #
 #     return jsonify({'code': 404})
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -69,6 +69,7 @@ def load_income():
                      .join(Bill, RentalVoucher.bill_id.__eq__(Bill.id))\
                      .join(Surchange, Surchange.id.__eq__(Bill.surchage_id))
 
+
 def load_customer_for_rental(room_name=None, customer_name=None):
     customer = db.session.query(Customer.name, Room.room_name, RentalVoucher.check_in_date, RentalVoucher.check_out_date, RentalVoucher.bill_id) \
         .join(Room, RentalVoucher.room_id.__eq__(Room.id)) \
@@ -78,6 +79,7 @@ def load_customer_for_rental(room_name=None, customer_name=None):
         customer = customer.filter(Room.room_name.__eq__(room_name), not Customer.name.__eq__(customer_name))
 
     return customer.all()
+
 
 def load_rental_voucher_by(customer_name=None, page=1):
     rental_voucher = db.session.query(Room.room_name, Customer.name,CustomerType.customer_type ,Customer.id_number,
@@ -95,22 +97,24 @@ def load_rental_voucher_by(customer_name=None, page=1):
 
     return rental_voucher.slice(start, end).all()
 
+
 def count_rental_vouchers():
     return RentalVoucher.query.count()
+
 
 def count_order_vouchers():
     return OrderVoucher.query.count()
 
+
 def load_room_left():
    return db.engine.execute(text("SELECT id FROM room WHERE id not in (SELECT room_id FROM rental_voucher)")).all()
-
-
 
 
 def load_order_voucher():
     return db.session.query(Room.room_name, Customer.name, OrderVoucher.check_in_date, OrderVoucher.check_out_date, OrderVoucher.bill_id)\
                      .join(Room, OrderVoucher.room_id.__eq__(Room.id))\
                      .join(Customer, OrderVoucher.customer_id.__eq__(Customer.id)).all()
+
 
 def load_order_voucher_by(customer_name=None, page=1):
     order_voucher = db.session.query(Room.room_name, Customer.name,CustomerType.customer_type ,Customer.id_number,
@@ -128,6 +132,7 @@ def load_order_voucher_by(customer_name=None, page=1):
 
     return order_voucher.slice(start, end).all()
 
+
 def load_room_type(page=1):
     room_type=db.session.query(RoomType.id, RoomType.room_type_name,RoomType.description,RoomType.maximum_customer, RoomType.price)
 
@@ -136,6 +141,7 @@ def load_room_type(page=1):
     end = start + page_size
 
     return room_type.slice(start, end).all()
+
 
 def count_room_type():
     return RoomType.query.count()

@@ -4,19 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="18162bcb-000d-425f-8bf5-19d2a7d04bf4" name="Changes" comment="Merge branch 'main' into feature-thanhdinh&#10;&#10;# Conflicts:&#10;#&#9;.idea/misc.xml&#10;#&#9;HotelManagement/index.py&#10;#&#9;HotelManagement/models.py&#10;#&#9;HotelManagement/templates/login.html">
-      <change afterPath="$PROJECT_DIR$/HotelManagement/static/img/pic3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/HotelManagement/static/img/pic4.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/HotelManagement/static/img/pic5.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/HotelManagement.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/HotelManagement.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/templates/layout/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/layout/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/templates/layout/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/layout/footer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HotelManagement/templates/layout/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/HotelManagement/templates/layout/header.html" afterDir="false" />
-    </list>
+    <list default="true" id="18162bcb-000d-425f-8bf5-19d2a7d04bf4" name="Changes" comment="Merge branch 'main' into feature-thanhdinh&#10;&#10;# Conflicts:&#10;#&#9;.idea/misc.xml&#10;#&#9;HotelManagement/index.py&#10;#&#9;HotelManagement/models.py&#10;#&#9;HotelManagement/templates/login.html" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

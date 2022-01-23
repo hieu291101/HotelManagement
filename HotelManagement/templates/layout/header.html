@@ -1,5 +1,5 @@
 <!-- Navigation -->
-{% if current_user.type != 'staff' %}
+
 <nav id="nav" class="navbar navbar-expand-md sticky-top">
     <a href="{{ url_for('home') }}" class="navbar-brand">BookingHotel.com</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
@@ -43,7 +43,7 @@
     </div>
 
 </nav>
-{% endif %}
+
 
 <div class="container alert-box">
 {% with messages = get_flashed_messages(with_categories=true) %} {% if

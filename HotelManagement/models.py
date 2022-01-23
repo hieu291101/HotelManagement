@@ -10,8 +10,8 @@ class User(db.Model, UserMixin):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String(50), nullable=False, unique=True)
-    password = Column(String(50), nullable=False)
+    username = Column(String(50), unique=True)
+    password = Column(String(50))
     login_status = Column(Boolean, default=True)
     register_date = Column(DateTime, default=datetime.now())
     avatar = Column(String(100))
@@ -27,8 +27,8 @@ class Customer(User):
 
     id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     name = Column(String(50), nullable=False)
-    gender = Column(String(10), nullable=False)
-    email = Column(String(30), nullable=False)
+    gender = Column(String(10), nullable=False, default='Khác')
+    email = Column(String(30))
     id_number = Column(String(20), nullable=False)  # Căn cước công dân
     nationality = Column(String(20), nullable=False)
     address = Column(String(60), nullable=False)
@@ -108,7 +108,7 @@ class Room(db.Model):
     __tablename__ = 'room'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    room_name = Column(String(30), nullable=False)
+    room_name = Column(String(30), nullable=False, unique=True)
     status = Column(Enum(Status), default=Status.NONE)
     capacity = Column(Integer, nullable=False, default=0)  # số người trên phòng
 

@@ -10,6 +10,7 @@ app.secret_key = "819048&(*%^*(*&(@9789&^&()(!@#$"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:281001@localhost/quanlykhachsandb?charset=utf8mb4'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['PAGE_SIZE'] = 4
+app.config['PAGE_SIZE_ROOM_ORDER'] = 6
 
 db = SQLAlchemy(app=app)
 

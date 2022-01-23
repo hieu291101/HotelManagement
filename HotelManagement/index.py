@@ -1,7 +1,6 @@
 import datetime
 import math
 from flask_login import login_user, login_required
-from sqlalchemy import null
 from HotelManagement import app, login
 from HotelManagement.admin import *
 import utils
@@ -274,6 +273,9 @@ def login_register():
 
 @app.route('/user-login', methods=['get', 'post'])
 def user_login():
+    if current_user.is_authenticated:
+        return redirect('/user-pagination')
+
     if request.method.__eq__('POST'):
         req = request.form
         username = req.get('username')
@@ -284,7 +286,7 @@ def user_login():
             login_user(user=user)
             return redirect('/user-pagination')
         else:
-            flash('Tài khoản hoặc mật khầu không khả dụng', 'warning')
+            flash('Tài khoản hoặc mật khầu không khả dụng', 'error')
             return redirect(request.url)
 
     return render_template('login.html')

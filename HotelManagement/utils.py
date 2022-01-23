@@ -1,16 +1,16 @@
 import hashlib
+import os
+from time import time
+import jwt
+
+from flask import flash, url_for, render_template
+from flask_mail import Message
 from sqlalchemy import text, extract, func, join
-from HotelManagement import db
-from HotelManagement.models import User, RentalVoucher, Room, Surchange, Bill, RoomType
-from HotelManagement.models import User, Customer
-from HotelManagement import db
-
-from sqlalchemy import text, extract, func
-
-from HotelManagement.models import User, Customer, RentalVoucher, OrderVoucher, Room, Bill, Surchange, CustomerType, \
-    RoomType
-from HotelManagement import db, app
-
+from HotelManagement import db, app, mail
+from HotelManagement.models import User, Customer, RentalVoucher, OrderVoucher, Room, Bill, \
+    Surchange, CustomerType, RoomType
+from threading import Thread
+from itsdangerous import URLSafeTimedSerializer
 
 
 def get_user_by_id(user_id):
@@ -23,6 +23,12 @@ def check_login(username, password):
 
         return User.query.filter(User.username.__eq__(username.strip()),
                                  User.password.__eq__(password)).first()
+
+
+def check_reset_password(username, email):
+    if username and email:
+        return Customer.query.filter(Customer.username.__eq__(username.strip()),
+                                     Customer.email.__eq__(email)).first()
 
 
 def check_date(orderdate, checkindate):
@@ -57,20 +63,25 @@ def add_customer(name, username, email, phone, identity, nationality,
 
 
 def load_rental_voucher():
-    return db.session.query(Room.room_name, Customer.name, RentalVoucher.check_in_date, RentalVoucher.check_out_date, RentalVoucher.bill_id)\
-                     .join(Room, RentalVoucher.room_id.__eq__(Room.id))\
-                     .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id)).all()
+    return db.session.query(Room.room_name, Customer.name, RentalVoucher.check_in_date, RentalVoucher.check_out_date,
+                            RentalVoucher.bill_id) \
+        .join(Room, RentalVoucher.room_id.__eq__(Room.id)) \
+        .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id)).all()
+
 
 def load_income():
-    income =  db.session.query(Room.room_name, Customer.id_number, Customer.name, RentalVoucher.check_in_date, RentalVoucher.check_out_date,
-                                   Bill.unit_price, Bill.status, Surchange.surchange)\
-                     .join(Room, RentalVoucher.room_id.__eq__(Room.id))\
-                     .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id))\
-                     .join(Bill, RentalVoucher.bill_id.__eq__(Bill.id))\
-                     .join(Surchange, Surchange.id.__eq__(Bill.surchage_id))
+    income = db.session.query(Room.room_name, Customer.id_number, Customer.name, RentalVoucher.check_in_date,
+                              RentalVoucher.check_out_date,
+                              Bill.unit_price, Bill.status, Surchange.surchange) \
+        .join(Room, RentalVoucher.room_id.__eq__(Room.id)) \
+        .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id)) \
+        .join(Bill, RentalVoucher.bill_id.__eq__(Bill.id)) \
+        .join(Surchange, Surchange.id.__eq__(Bill.surchage_id))
+
 
 def load_customer_for_rental(room_name=None, customer_name=None):
-    customer = db.session.query(Customer.name, Room.room_name, RentalVoucher.check_in_date, RentalVoucher.check_out_date, RentalVoucher.bill_id) \
+    customer = db.session.query(Customer.name, Room.room_name, RentalVoucher.check_in_date,
+                                RentalVoucher.check_out_date, RentalVoucher.bill_id) \
         .join(Room, RentalVoucher.room_id.__eq__(Room.id)) \
         .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id))
 
@@ -79,12 +90,13 @@ def load_customer_for_rental(room_name=None, customer_name=None):
 
     return customer.all()
 
+
 def load_rental_voucher_by(customer_name=None, page=1):
-    rental_voucher = db.session.query(Room.room_name, Customer.name,CustomerType.customer_type ,Customer.id_number,
-                                      RentalVoucher.check_in_date, RentalVoucher.check_out_date, RentalVoucher.bill_id)\
-                     .join(Room, RentalVoucher.room_id.__eq__(Room.id))\
-                     .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id)) \
-                     .join(CustomerType, Customer.customer_type_id.__eq__(CustomerType.id))
+    rental_voucher = db.session.query(Room.room_name, Customer.name, CustomerType.customer_type, Customer.id_number,
+                                      RentalVoucher.check_in_date, RentalVoucher.check_out_date, RentalVoucher.bill_id) \
+        .join(Room, RentalVoucher.room_id.__eq__(Room.id)) \
+        .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id)) \
+        .join(CustomerType, Customer.customer_type_id.__eq__(CustomerType.id))
 
     if customer_name:
         rental_voucher = rental_voucher.filter(Customer.name.contains(customer_name))
@@ -95,29 +107,33 @@ def load_rental_voucher_by(customer_name=None, page=1):
 
     return rental_voucher.slice(start, end).all()
 
+
 def count_rental_vouchers():
     return RentalVoucher.query.count()
+
 
 def count_order_vouchers():
     return OrderVoucher.query.count()
 
+
 def load_room_left():
-   return db.engine.execute(text("SELECT id FROM room WHERE id not in (SELECT room_id FROM rental_voucher)")).all()
-
-
+    return db.engine.execute(text("SELECT id FROM room WHERE id not in (SELECT room_id FROM rental_voucher)")).all()
 
 
 def load_order_voucher():
-    return db.session.query(Room.room_name, Customer.name, OrderVoucher.check_in_date, OrderVoucher.check_out_date, OrderVoucher.bill_id)\
-                     .join(Room, OrderVoucher.room_id.__eq__(Room.id))\
-                     .join(Customer, OrderVoucher.customer_id.__eq__(Customer.id)).all()
+    return db.session.query(Room.room_name, Customer.name, OrderVoucher.check_in_date, OrderVoucher.check_out_date,
+                            OrderVoucher.bill_id) \
+        .join(Room, OrderVoucher.room_id.__eq__(Room.id)) \
+        .join(Customer, OrderVoucher.customer_id.__eq__(Customer.id)).all()
+
 
 def load_order_voucher_by(customer_name=None, page=1):
-    order_voucher = db.session.query(Room.room_name, Customer.name,CustomerType.customer_type ,Customer.id_number,
-                                     OrderVoucher.order_date, OrderVoucher.check_in_date, OrderVoucher.check_out_date, OrderVoucher.bill_id)\
-                     .join(Room, OrderVoucher.room_id.__eq__(Room.id))\
-                     .join(Customer, OrderVoucher.customer_id.__eq__(Customer.id)) \
-                     .join(CustomerType, Customer.customer_type_id.__eq__(CustomerType.id))
+    order_voucher = db.session.query(Room.room_name, Customer.name, CustomerType.customer_type, Customer.id_number,
+                                     OrderVoucher.order_date, OrderVoucher.check_in_date, OrderVoucher.check_out_date,
+                                     OrderVoucher.bill_id) \
+        .join(Room, OrderVoucher.room_id.__eq__(Room.id)) \
+        .join(Customer, OrderVoucher.customer_id.__eq__(Customer.id)) \
+        .join(CustomerType, Customer.customer_type_id.__eq__(CustomerType.id))
 
     if customer_name:
         order_voucher = order_voucher.filter(Customer.name.contains(customer_name))
@@ -128,8 +144,10 @@ def load_order_voucher_by(customer_name=None, page=1):
 
     return order_voucher.slice(start, end).all()
 
+
 def load_room_type(page=1):
-    room_type=db.session.query(RoomType.id, RoomType.room_type_name,RoomType.description,RoomType.maximum_customer, RoomType.price)
+    room_type = db.session.query(RoomType.id, RoomType.room_type_name, RoomType.description, RoomType.maximum_customer,
+                                 RoomType.price)
 
     page_size = app.config['PAGE_SIZE']
     start = (page - 1) * page_size
@@ -137,35 +155,38 @@ def load_room_type(page=1):
 
     return room_type.slice(start, end).all()
 
+
 def count_room_type():
     return RoomType.query.count()
 
+
 def count_room_full_by(from_date=None, to_date=None, room_type=None):
-    room = db.session.query(RoomType.room_type_name, RoomType.maximum_customer,RoomType.price, Room.status,
-                            OrderVoucher.check_in_date, OrderVoucher.check_out_date, Room.room_name)\
-                            .join(Room, OrderVoucher.room_id.__eq__(Room.id))\
-                            .join(RoomType, Room.room_type_id.__eq__(RoomType.id))
+    room = db.session.query(RoomType.room_type_name, RoomType.maximum_customer, RoomType.price, Room.status,
+                            OrderVoucher.check_in_date, OrderVoucher.check_out_date, Room.room_name) \
+        .join(Room, OrderVoucher.room_id.__eq__(Room.id)) \
+        .join(RoomType, Room.room_type_id.__eq__(RoomType.id))
 
     if room_type:
-        room=room.filter(RoomType.room_type_name.__eq__(room_type))
+        room = room.filter(RoomType.room_type_name.__eq__(room_type))
 
     if from_date:
         room = room.filter(OrderVoucher.check_out_date.__ge__(from_date))
     if to_date:
         room = room.filter(OrderVoucher.check_in_date.__le__(to_date))
 
-
     return room.count()
+
 
 def count_room_empty(room_type):
     room = db.session.query(RoomType.room_type_name, RoomType.maximum_customer, RoomType.price, Room.status,
-                             Room.room_name) \
-                .join(RoomType, Room.room_type_id.__eq__(RoomType.id))
+                            Room.room_name) \
+        .join(RoomType, Room.room_type_id.__eq__(RoomType.id))
 
     if room_type:
-        room=room.filter(RoomType.room_type_name.__eq__(room_type))
+        room = room.filter(RoomType.room_type_name.__eq__(room_type))
 
     return room.count()
+
 
 def count_order(order):
     total_quantity, total_amount = 0, 0
@@ -179,6 +200,7 @@ def count_order(order):
         'total_quantity': total_quantity,
         'total_amount': total_amount
     }
+
 
 def month_stats(mon, from_date=None, to_date=None, keyy=None, year=None):
     s = db.session.query(extract('month', RentalVoucher.check_in_date), RoomType.room_type_name,
@@ -224,9 +246,36 @@ def count_stats(month, kw=None):
 
     return i.all()
 
+
 # def add_order(order):
 #     if order:
 #         order_voucher = OrderVoucher()
 
 # def add_order_voucher()
 
+
+##########################
+##########################
+def send_email(customer):
+    token = Customer.get_reset_token(customer)
+    msg = Message()
+    msg.subject = "Hotel App Password Reset"
+    msg.sender = "thanhdinhc2810@gmail.com"
+    msg.recipients = [customer.email]
+    msg.body = 'testing'
+
+    msg.html = render_template('reset_email.html',
+                               customer=customer,
+                               token=token)
+    mail.send(msg)
+
+
+def verify_reset_token(token):
+    try:
+        username = jwt.decode(token, key=app.secret_key,
+                              algorithms=['HS256'])['reset_password']
+        print(username)
+    except Exception as e:
+        print(e)
+        return
+    return User.query.filter_by(username=username).first()

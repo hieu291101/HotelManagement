@@ -71,7 +71,7 @@ function updateStatusBill(billId) {
         }
     }).then(res => res.json()).then(data => {
         if (data.status == 201) {
-            alert('Thanh toán thành công')
+            confirm('Thanh toán thành công')
             location.reload()
         } else if (data.status == 404)
             alert(data.err_msg)

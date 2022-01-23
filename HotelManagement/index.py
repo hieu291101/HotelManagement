@@ -1,18 +1,12 @@
 import datetime
-
 import math
-
 from flask_login import login_user, login_required
 from sqlalchemy import null
-
-
 from HotelManagement import app, login
 from HotelManagement.admin import *
 import utils
 import cloudinary.uploader
-
 from flask import render_template, request, redirect, flash, url_for, session, jsonify
-
 
 
 @app.route('/', methods=["GET", "POST"])
@@ -22,7 +16,6 @@ def home():
         checkindate = req.get('checkindate')
         checkoutdate = req.get('checkoutdate')
         adults = req.get('adults')
-
         session['checkindate'] = checkindate
         session['checkoutdate'] = checkoutdate
         session['adults'] = adults
@@ -47,15 +40,14 @@ def home():
 
     return render_template('index.html')
 
+
 @app.route('/order', methods=["GET", "POST"])
 def order_room():
-
     if request.method == "POST":
         req = request.form
         checkindate = req.get('checkindate')
         checkoutdate = req.get('checkoutdate')
         adults = req.get('adults')
-
         # Kiểm tra nhập đủ giá trị hay chưa
         if checkindate and checkoutdate and adults:
             checkindatetime = datetime.datetime.strptime(checkindate, "%Y-%m-%d")
@@ -85,14 +77,17 @@ def order_room():
     return render_template('order.html', load_room_type=load_room_type,
                            pages=math.ceil(counter / app.config['PAGE_SIZE']))
 
+
 @app.context_processor
 def utility_processor():
     def count_room_by_room_type(roomtype):
-        counter_room_full = utils.count_room_full_by(from_date=session['checkindate'], to_date=session['checkoutdate'],room_type=roomtype )
+        counter_room_full = utils.count_room_full_by(from_date=session['checkindate'], to_date=session['checkoutdate'],
+                                                     room_type=roomtype)
         counter = utils.count_room_empty(room_type=roomtype)
-        return  counter - counter_room_full
+        return counter - counter_room_full
 
     return dict(count_room_by_room_type=count_room_by_room_type, order_stats=utils.count_order(session.get('order')))
+
 
 @app.route('/staff-page/order/room-order', methods=['get', 'post'])
 def room_to_order():
@@ -139,7 +134,6 @@ def room_to_order():
         session['gender'] = gender
         session['address'] = address
 
-
         # if name and email and phone and identity and nationality and gender and address:
         #     utils.add_order(name=name, )
 
@@ -160,11 +154,12 @@ def room_to_order():
     #                     gender=session.get('gender'), address=session.get('address'), password=" ", room_id=roomid,
     #                     check_in_date=session.get('checkindate'), check_out_date=session.get('checkoutdate'))
 
-
-    room_to_order = utils.load_room_order(session.get('checkindate'), session.get('checkoutdate'),page=int(page))
+    room_to_order = utils.load_room_order(session.get('checkindate'), session.get('checkoutdate'), page=int(page))
     counter = session.get('counter_room_to_order')
 
-    return render_template('room.html',room_to_order=room_to_order, pages=math.ceil(counter / app.config['PAGE_SIZE_ROOM_ORDER']))
+    return render_template('room.html', room_to_order=room_to_order,
+                           pages=math.ceil(counter / app.config['PAGE_SIZE_ROOM_ORDER']))
+
 
 @app.route('/api/order-voucher', methods=['post'])
 @login_required
@@ -177,17 +172,17 @@ def add_order_voucher():
     nationality = data.get('nationality')
     gender = data.get('gender')
     address = data.get('address')
-    room_name= data.get('room_name')
+    room_name = data.get('room_name')
     check_in_date = data.get('check_in_date')
     check_out_date = data.get('check_out_date')
 
     room_id = utils.load_room_by(room_name)
     try:
         o = utils.add_order(name=name, username=identity, email=email,
-                        phone=phone, identity=identity,
-                        nationality=nationality, gender=gender,
-                        address=address, password=" ", room_id=room_id,
-                        check_in_date=check_in_date, check_out_date=check_out_date)
+                            phone=phone, identity=identity,
+                            nationality=nationality, gender=gender,
+                            address=address, password=" ", room_id=room_id,
+                            check_in_date=check_in_date, check_out_date=check_out_date)
     except:
         return {'status': 404, 'err_msg': 'Chuong trinh dang bi loi!!!'}
 
@@ -195,6 +190,7 @@ def add_order_voucher():
         'room_id': o.room_id,
         'customer_name': o.customer_id
     }}
+
 
 @app.route('/api/payment', methods=['post'])
 @login_required
@@ -209,6 +205,7 @@ def update_bill():
 
     return {'status': 201}
 
+
 @app.route('/api/order-to-rental', methods=['post'])
 @login_required
 def order_to_rental():
@@ -220,12 +217,13 @@ def order_to_rental():
     bill_id = data.get('bill_id')
 
     try:
-        o = utils.move_order_to_rental(room_name=room_name, customer_name=customer_name,check_in_date=check_in_date,
+        o = utils.move_order_to_rental(room_name=room_name, customer_name=customer_name, check_in_date=check_in_date,
                                        check_out_date=check_out_date, bill_id=bill_id)
     except:
         return {'status': 404, 'err_msg': 'Chuong trinh dang bi loi!!!'}
 
     return {'status': 201}
+
 
 @app.route('/user-register', methods=['get', 'post'])
 def user_register():
@@ -241,7 +239,6 @@ def user_register():
         password = request.form.get('password')
         confirmpassword = request.form.get('confirmpassword')
         avatar_path = None
-
 
         try:
             if password.strip().__eq__(confirmpassword.strip()):
@@ -288,7 +285,6 @@ def user_login():
             return redirect('/user-pagination')
         else:
             flash('Tài khoản hoặc mật khầu không khả dụng', 'warning')
-
             return redirect(request.url)
 
     return render_template('login.html')
@@ -347,6 +343,7 @@ def staff_page():
                            rental_voucher_by=rental_voucher_by, pages=math.ceil(counter / app.config['PAGE_SIZE']),
                            customer=customer)
 
+
 @app.route('/staff-page/order')
 def staff_page_order():
     if not current_user.is_authenticated and current_user.type == 'staff':
@@ -358,21 +355,22 @@ def staff_page_order():
     counter = utils.count_order_vouchers()
     order_voucher_by = utils.load_order_voucher_by(customer_name=keyword, page=int(page))
 
-    return render_template('staff_order.html',order_voucher=utils.load_order_voucher(),
+    return render_template('staff_order.html', order_voucher=utils.load_order_voucher(),
                            order_voucher_by=order_voucher_by,
                            pages=math.ceil(counter / app.config['PAGE_SIZE']))
+
 
 @app.route('/api/add-order', methods=['post'])
 def add_to_order():
     data = request.json
-    id=str(data.get('id'))
-    room_type_name=data.get('room_type_name')
-    capacity=data.get('capacity')
-    price=data.get('price')
+    id = str(data.get('id'))
+    room_type_name = data.get('room_type_name')
+    capacity = data.get('capacity')
+    price = data.get('price')
 
     order = session.get('order')
     if not order:
-        order={}
+        order = {}
 
     if id in order:
         order[id]['quantity'] = order[id]['quantity'] + 1
@@ -388,6 +386,7 @@ def add_to_order():
     session['order'] = order
 
     return jsonify(utils.count_order(order))
+
 
 # @app.route('/api/add-staff-order', methods=['post'])
 # def add_to_order():
@@ -415,7 +414,8 @@ def add_to_order():
 @app.route('/order-detail')
 def order_detail():
     return render_template('order_detail.html',
-                           stats = utils.count_order(session['order']))
+                           stats=utils.count_order(session['order']))
+
 
 # @app.route('/api/pay', methods=['post'])
 # def pay():
@@ -425,7 +425,6 @@ def order_detail():
 #         return jsonify({'code', 200})
 #
 #     return jsonify({'code': 404})
-
 
 if __name__ == "__main__":
     app.run(debug=True)

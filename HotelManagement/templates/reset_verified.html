@@ -20,6 +20,14 @@
                 <form method="post">
                     <!--New password-->
                     <div class="form-outline mb-4">
+                        <label class="form-label" for="username">Tài khoản</label>
+                        <input readonly
+                               type="text"
+                               id="username"
+                               class="form-control"
+                               value="{{ username }}"/>
+                    </div>
+                    <div class="form-outline mb-4">
                         <label class="form-label" for="password">Nhập mật khẩu mới: </label>
                         <input required
                                type="password"

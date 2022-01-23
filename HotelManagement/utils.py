@@ -269,12 +269,14 @@ def count_stats(month, kw=None):
 
 
 def add_order(name, username, email, phone, identity, nationality,
-              gender, address, password, room_id, check_in_date, check_out_date, **kwargs):
+              gender, address, password, room_name, check_in_date, check_out_date, **kwargs):
     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
     name = str(name).strip()
     username = str(username).strip()
     customer_type_id = '1' if nationality == "Việt Nam" else '2'
     location_id = '1'
+    room = load_room_by(room_name=room_name)
+
     customer = Customer(name=name,
                         gender=gender,
                         email=email,
@@ -287,18 +289,20 @@ def add_order(name, username, email, phone, identity, nationality,
                         location_id=location_id,
                         customer_type_id=customer_type_id,
                         avatar=kwargs.get('avatar'))
+    db.session.add(customer)
+    db.session.commit()
 
     bill = Bill(surchage_id=1)
-    order_voucher = OrderVoucher(room_id=room_id, customer_id=customer.id,
+    db.session.add(bill)
+    db.session.commit()
+
+    order_voucher = OrderVoucher(room_id=room.id, customer_id=customer.id,
                                  check_in_date=check_in_date,
                                  check_out_date=check_out_date, bill_id=bill.id)
 
-    db.session.add_all(customer, bill, order_voucher)
-    # db.session.add(bill)
-    # db.session.add(order_voucher)
-    db.session.commit()
 
-    return order_voucher
+    db.session.add(order_voucher)
+    db.session.commit()
 
 
 def load_room_order(from_date=None, to_date=None, room_type=None, page=1):
@@ -315,8 +319,8 @@ def load_room_order(from_date=None, to_date=None, room_type=None, page=1):
 
     room1 = room1.filter(~Room.id.in_(room))
 
-    # if room_type:
-    #     room1 = room1.filter(Customer.name.__eq__(room_type))
+    if room_type:
+        room1 = room1.filter(RoomType.room_type_name.contains(room_type))
 
     session['counter_room_to_order'] = room1.count()
 
@@ -326,6 +330,25 @@ def load_room_order(from_date=None, to_date=None, room_type=None, page=1):
 
     return room1.slice(start, end).all();
 
+# def load_room_order_customer(from_date=None, to_date=None, room_type=None):
+#     room = db.session.query(Room.id).select_from(Room) \
+#         .join(Room.order_vouchers)
+#     if from_date:
+#         room = room.filter(OrderVoucher.check_out_date.__ge__(from_date))
+#     if to_date:
+#         room = room.filter(OrderVoucher.check_in_date.__le__(to_date))
+#
+#     room1 = db.session.query(RoomType.room_type_name, RoomType.maximum_customer, RoomType.price, Room.id, Room.status,
+#                              Room.room_name) \
+#         .join(RoomType, Room.room_type_id.__eq__(RoomType.id))
+#
+#     room1 = room1.filter(~Room.id.in_(room))
+#
+#
+#     if room_type:
+#         room1 = room1.filter(Customer.name.__eq__(room_type))
+#
+#     return room1.first()
 
 def load_room_by(room_name=None):
     room = db.session.query(Room.id, Room.status,

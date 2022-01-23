@@ -24,6 +24,7 @@ function addToOrder(id, room_type_name, capacity, price){
 }
 
 function addOrderVoucher(roomName) {
+    let choice = confirm('Bạn có chắc chắn đặt phòng hay không?')
     let name = document.getElementsByName('name')
     let email = document.getElementsByName('email')
     let phone = document.getElementsByName('phone')
@@ -33,6 +34,7 @@ function addOrderVoucher(roomName) {
     let address = document.getElementsByName('address')
     let check_in_date = document.getElementsByName('checkindate')
     let check_out_date = document.getElementsByName('checkoutdate')
+    alert(roomName)
     fetch('/api/order-voucher', {
         method: 'post',
         body: JSON.stringify({
@@ -52,8 +54,8 @@ function addOrderVoucher(roomName) {
         }
     }).then(res => res.json()).then(data => {
         if (data.status == 201) {
-            let o = data.order
-            alert(o.room_id)
+            alert('Đặt thành công')
+            location.reload()
         } else if (data.status == 404)
             alert(data.err_msg)
     })
@@ -80,7 +82,7 @@ function updateStatusBill(billId) {
 
 function moveOrderToRental(roomName, customerName, checkInDate, checkOutDate, billId) {
     let choice = confirm('Bạn có chắc chắn thuê hay không?')
-    if choice == True {
+    if (choice == true) {
         fetch('/api/order-to-rental', {
         method: 'post',
         body: JSON.stringify({

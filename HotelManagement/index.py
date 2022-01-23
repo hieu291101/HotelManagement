@@ -31,10 +31,10 @@ def home():
 
         # Kiểm tra các ràng buộc
         if not check_dates:
-            flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "warning")
+            flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "error")
             return redirect(request.url)
         elif checkindatetime < datetime.now() and (checkindatetime - checkoutdatetime).days == 0:
-            flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "warning")
+            flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "error")
             return redirect(request.url)
         return redirect('/order')
 
@@ -59,10 +59,10 @@ def order_room():
 
         # Kiểm tra các ràng buộc
         if not check_dates:
-            flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "warning")
+            flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "error")
             return redirect(request.url)
         elif checkindatetime < datetime.datetime.now() and (checkindatetime - checkoutdatetime).days == 0:
-            flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "warning")
+            flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "error")
             return redirect(request.url)
 
         session['checkindate'] = checkindate
@@ -108,10 +108,10 @@ def room_to_order():
 
         # Kiểm tra các ràng buộc
         if not check_dates:
-            flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "warning")
+            flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "error")
             return redirect(request.url)
         elif checkindatetime < datetime.now() and (checkindatetime - checkoutdatetime).days == 0:
-            flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "warning")
+            flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "error")
         #     return redirect(request.url)
 
         session['checkindate'] = checkindate
@@ -134,27 +134,12 @@ def room_to_order():
         session['gender'] = gender
         session['address'] = address
 
-        # if name and email and phone and identity and nationality and gender and address:
-        #     utils.add_order(name=name, )
 
     page = request.args.get('page', 1)
     keyword = request.args.get('keyword')
-    # roomname =request.args.get('roomname')
-    # roomid = utils.load_room_by(roomname)
-    #
-    # if utils.get_customer_by_cmnd(session.get('identity')):
-    #     utils.update_customer(name=session.get('name'), username=session.get('identity'), email=session.get('email'),
-    #                           phone=session.get('phone'), identity=session.get('identity'),
-    #                           nationality=session.get('nationality'),
-    #                           gender=session.get('gender'), address=session.get('address'), password=" ")
-    # else:
-    #     utils.add_order(name=session.get('name'), username=session.get('identity'), email=session.get('email'),
-    #                     phone=session.get('phone'), identity=session.get('identity'),
-    #                     nationality=session.get('nationality'),
-    #                     gender=session.get('gender'), address=session.get('address'), password=" ", room_id=roomid,
-    #                     check_in_date=session.get('checkindate'), check_out_date=session.get('checkoutdate'))
 
-    room_to_order = utils.load_room_order(session.get('checkindate'), session.get('checkoutdate'), page=int(page))
+
+    room_to_order = utils.load_room_order(session.get('checkindate'), session.get('checkoutdate'), room_type=keyword, page=int(page))
     counter = session.get('counter_room_to_order')
 
     return render_template('room.html', room_to_order=room_to_order,
@@ -169,27 +154,24 @@ def add_order_voucher():
     email = data.get('email')
     phone = data.get('phone')
     identity = data.get('identity')
+    username = identity
     nationality = data.get('nationality')
     gender = data.get('gender')
     address = data.get('address')
     room_name = data.get('room_name')
-    check_in_date = data.get('check_in_date')
-    check_out_date = data.get('check_out_date')
+    check_in_date = datetime.strptime(data.get('check_in_date'), "%Y-%m-%d")
+    check_out_date = datetime.strptime(data.get('check_out_date'), "%Y-%m-%d")
 
-    room_id = utils.load_room_by(room_name)
     try:
-        o = utils.add_order(name=name, username=identity, email=email,
+        utils.add_order(name=name, username=username, email=email,
                             phone=phone, identity=identity,
                             nationality=nationality, gender=gender,
-                            address=address, password=" ", room_id=room_id,
+                            address=address, password=' ', room_name=room_name,
                             check_in_date=check_in_date, check_out_date=check_out_date)
     except:
         return {'status': 404, 'err_msg': 'Chuong trinh dang bi loi!!!'}
 
-    return {'status': 201, 'order': {
-        'room_id': o.room_id,
-        'customer_name': o.customer_id
-    }}
+    return {'status': 201}
 
 
 @app.route('/api/payment', methods=['post'])
@@ -260,9 +242,9 @@ def user_register():
                 flash('Đăng ký thành công', 'success')
                 return redirect(url_for('user_login'))
             else:
-                flash('Mật khẩu không khớp', 'warning')
+                flash('Mật khẩu không khớp', 'error')
         except:
-            flash('Hệ thống đang có lỗi !!', 'warning')
+            flash('Hệ thống đang có lỗi !!', 'error')
 
     return render_template('register.html')
 
@@ -284,7 +266,7 @@ def user_login():
             login_user(user=user)
             return redirect('/user-pagination')
         else:
-            flash('Tài khoản hoặc mật khầu không khả dụng', 'warning')
+            flash('Tài khoản hoặc mật khầu không khả dụng', 'error')
             return redirect(request.url)
 
     return render_template('login.html')
@@ -467,7 +449,7 @@ def reset_verified(token):
         except:
             flash('Hệ thống đang có lỗi !!', 'error')
 
-    return render_template('reset_verified.html')
+    return render_template('reset_verified.html', username=user.username)
 
 
 if __name__ == "__main__":

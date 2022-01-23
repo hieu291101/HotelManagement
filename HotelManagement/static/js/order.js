@@ -79,8 +79,9 @@ function updateStatusBill(billId) {
 }
 
 function moveOrderToRental(roomName, customerName, checkInDate, checkOutDate, billId) {
-
-    fetch('/api/order-to-rental', {
+    let choice = confirm('Bạn có chắc chắn thuê hay không?')
+    if choice == True {
+        fetch('/api/order-to-rental', {
         method: 'post',
         body: JSON.stringify({
             'room_name': roomName,
@@ -92,11 +93,13 @@ function moveOrderToRental(roomName, customerName, checkInDate, checkOutDate, bi
         headers: {
             'Content-Type':' application/json'
         }
-    }).then(res => res.json()).then(data => {
-        if (data.status == 201) {
-            alert('Thuê thành công')
-            location.reload()
-        } else if (data.status == 404)
-            alert(data.err_msg)
-    })
+        }).then(res => res.json()).then(data => {
+            if (data.status == 201) {
+                alert('Thuê thành công')
+                location.reload()
+            } else if (data.status == 404)
+                alert(data.err_msg)
+        })
+    }
+
 }

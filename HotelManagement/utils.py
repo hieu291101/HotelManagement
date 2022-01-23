@@ -270,14 +270,32 @@ def count_stats(month, kw=None):
 
 def add_order(name, username, email, phone, identity, nationality,
               gender, address, password, room_id, check_in_date, check_out_date, **kwargs):
-    add_customer(name=name, username=username, email=email, phone=phone, identity=identity, password=password
-                 , nationality=nationality, gender=gender, address=address, **kwargs)
-    bill = Bill(surchage_id=1)
-    order_voucher = OrderVoucher(room_id=room_id, customer_id=get_customer_by_cmnd(cmnd=identity),
-                                 check_in_date=check_in_date,
-                                 check_out_date=check_out_date, bill_id=bill)
+    password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
+    name = str(name).strip()
+    username = str(username).strip()
+    customer_type_id = '1' if nationality == "Việt Nam" else '2'
+    location_id = '1'
+    customer = Customer(name=name,
+                        gender=gender,
+                        email=email,
+                        id_number=identity,
+                        nationality=nationality,
+                        address=address,
+                        phone_number=phone,
+                        username=username,
+                        password=password,
+                        location_id=location_id,
+                        customer_type_id=customer_type_id,
+                        avatar=kwargs.get('avatar'))
 
-    db.session.add(order_voucher)
+    bill = Bill(surchage_id=1)
+    order_voucher = OrderVoucher(room_id=room_id, customer_id=customer.id,
+                                 check_in_date=check_in_date,
+                                 check_out_date=check_out_date, bill_id=bill.id)
+
+    db.session.add_all(customer, bill, order_voucher)
+    # db.session.add(bill)
+    # db.session.add(order_voucher)
     db.session.commit()
 
     return order_voucher
@@ -316,15 +334,15 @@ def load_room_by(room_name=None):
     if room_name:
         room = room.filter(Room.room_name.__eq__(room_name))
 
-    return room.all()
+    return room.first()
 
 
 def load_customer_by(customer_name=None):
     customer = db.session.query(Customer)
     if customer_name:
-        customer = customer.filter(Room.room_name.__eq__(customer_name))
+        customer = customer.filter(Customer.name.__eq__(customer_name))
 
-    return customer.all()
+    return customer.first()
 
 
 def change_bill_status(bill_id):
@@ -337,17 +355,26 @@ def change_bill_status(bill_id):
 
 def move_order_to_rental(room_name, customer_name, check_in_date, check_out_date, bill_id):
     room = load_room_by(room_name=room_name)
-    customer = load_room_by(customer_name=customer_name)
+    customer = load_customer_by(customer_name=customer_name)
 
     rental_voucher = RentalVoucher(room_id=room.id, customer_id=customer.id,
                                    check_in_date=check_in_date,
                                    check_out_date=check_out_date, bill_id=bill_id)
+
+    rental_voucher1 = db.session.query(RentalVoucher)
+    rental_voucher1 = rental_voucher1.filter(RentalVoucher.room_id.__eq__(room.id))
+    rental_voucher1 = rental_voucher1.filter(RentalVoucher.customer_id.__eq__(customer.id))
+    if rental_voucher1:
+        rental_voucher1.delete()
+
     order_voucher = db.session.query(OrderVoucher)
     order_voucher = order_voucher.filter(OrderVoucher.room_id.__eq__(room.id))
     order_voucher = order_voucher.filter(OrderVoucher.customer_id.__eq__(customer.id))
-    order_voucher.delete()
+    if order_voucher:
+        order_voucher.delete()
 
     db.session.add(rental_voucher)
+
     db.session.commit()
 
     return rental_voucher

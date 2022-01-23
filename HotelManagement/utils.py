@@ -1,24 +1,16 @@
 import hashlib
-from sqlalchemy import text, extract, func, join
-from HotelManagement import db
-from HotelManagement.models import User, RentalVoucher, Room, Surchange, Bill, RoomType
-from HotelManagement.models import User, Customer
-from HotelManagement import db
-
 from flask import session
 from sqlalchemy import text, extract, func, join
 from HotelManagement import db
 from HotelManagement.models import User, RentalVoucher, Room, Surchange, Bill, RoomType, Status
 from HotelManagement.models import User, Customer
 from HotelManagement import db
-
 from flask_login import current_user
 from sqlalchemy import text, extract, func
 
 from HotelManagement.models import User, Customer, RentalVoucher, OrderVoucher, Room, Bill, Surchange, CustomerType, \
     RoomType
 from HotelManagement import db, app
-
 
 
 def get_user_by_id(user_id):
@@ -110,10 +102,11 @@ def load_customer_for_rental(room_name=None, customer_name=None):
 
 def load_rental_voucher_by(customer_name=None, page=1):
     rental_voucher = db.session.query(Room.room_name, Customer.name, CustomerType.customer_type, Customer.id_number,
-                                      RentalVoucher.check_in_date, RentalVoucher.check_out_date, RentalVoucher.bill_id, Bill.status) \
+                                      RentalVoucher.check_in_date, RentalVoucher.check_out_date, RentalVoucher.bill_id,
+                                      Bill.status) \
         .join(Room, RentalVoucher.room_id.__eq__(Room.id)) \
         .join(Customer, RentalVoucher.customer_id.__eq__(Customer.id)) \
-        .join(CustomerType, Customer.customer_type_id.__eq__(CustomerType.id))\
+        .join(CustomerType, Customer.customer_type_id.__eq__(CustomerType.id)) \
         .join(Bill, RentalVoucher.bill_id.__eq__(Bill.id))
 
     if customer_name:
@@ -146,6 +139,7 @@ def load_order_voucher():
         .join(Room, OrderVoucher.room_id.__eq__(Room.id)) \
         .join(Customer, OrderVoucher.customer_id.__eq__(Customer.id)).all()
 
+
 def load_order_voucher_by(customer_name=None, page=1):
     order_voucher = db.session.query(Room.room_name, Customer.name, CustomerType.customer_type, Customer.id_number,
                                      OrderVoucher.order_date, OrderVoucher.check_in_date, OrderVoucher.check_out_date,
@@ -163,8 +157,10 @@ def load_order_voucher_by(customer_name=None, page=1):
 
     return order_voucher.slice(start, end).all()
 
+
 def room_type():
     return RoomType.query.all()
+
 
 def load_room_type(page=1):
     room_type = db.session.query(RoomType.id, RoomType.room_type_name, RoomType.description, RoomType.maximum_customer,
@@ -318,6 +314,7 @@ def load_room_by(room_name=None):
 
     return room.all()
 
+
 def load_customer_by(customer_name=None):
     customer = db.session.query(Customer)
     if customer_name:
@@ -325,20 +322,22 @@ def load_customer_by(customer_name=None):
 
     return customer.all()
 
+
 def change_bill_status(bill_id):
     bill = db.session.query(Bill).get(bill_id)
-    bill.status=Status.DONE
+    bill.status = Status.DONE
     db.session.commit()
 
     return bill
+
 
 def move_order_to_rental(room_name, customer_name, check_in_date, check_out_date, bill_id):
     room = load_room_by(room_name=room_name)
     customer = load_room_by(customer_name=customer_name)
 
     rental_voucher = RentalVoucher(room_id=room.id, customer_id=customer.id,
-                                 check_in_date=check_in_date,
-                                 check_out_date=check_out_date, bill_id=bill_id)
+                                   check_in_date=check_in_date,
+                                   check_out_date=check_out_date, bill_id=bill_id)
     order_voucher = db.session.query(OrderVoucher)
     order_voucher = order_voucher.filter(OrderVoucher.room_id.__eq__(room.id))
     order_voucher = order_voucher.filter(OrderVoucher.customer_id.__eq__(customer.id))

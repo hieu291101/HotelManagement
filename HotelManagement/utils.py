@@ -1,17 +1,14 @@
 import hashlib
-from flask import session
+import jwt
+
+from flask import flash, url_for, render_template, session
+from flask_mail import Message
 from sqlalchemy import text, extract, func, join
-from HotelManagement import db
-from HotelManagement.models import User, RentalVoucher, Room, Surchange, Bill, RoomType, Status
-from HotelManagement.models import User, Customer
-from HotelManagement import db
+from HotelManagement import db, app, mail
 from flask_login import current_user
 from sqlalchemy import text, extract, func
-
 from HotelManagement.models import User, Customer, RentalVoucher, OrderVoucher, Room, Bill, Surchange, CustomerType, \
-    RoomType
-from HotelManagement import db, app
-
+    RoomType, Status
 
 def get_user_by_id(user_id):
     return User.query.get(user_id)
@@ -29,6 +26,12 @@ def check_login(username, password):
 
         return User.query.filter(User.username.__eq__(username.strip()),
                                  User.password.__eq__(password)).first()
+
+
+def check_reset_password(username, email):
+    if username and email:
+        return Customer.query.filter(Customer.username.__eq__(username.strip()),
+                                     Customer.email.__eq__(email)).first()
 
 
 def check_date(orderdate, checkindate):
@@ -264,6 +267,7 @@ def count_stats(month, kw=None):
     return i.all()
 
 
+
 def add_order(name, username, email, phone, identity, nationality,
               gender, address, password, room_id, check_in_date, check_out_date, **kwargs):
     add_customer(name=name, username=username, email=email, phone=phone, identity=identity, password=password
@@ -352,4 +356,29 @@ def move_order_to_rental(room_name, customer_name, check_in_date, check_out_date
 # def add_order_voucher()
 
 
-# def add_order_voucher()
+##########################
+##########################
+def send_email(customer):
+    token = Customer.get_reset_token(customer)
+    msg = Message()
+    msg.subject = "Hotel App Password Reset"
+    msg.sender = "thanhdinhc2810@gmail.com"
+    msg.recipients = [customer.email]
+    msg.body = 'testing'
+
+    msg.html = render_template('reset_email.html',
+                               customer=customer,
+                               token=token)
+    mail.send(msg)
+
+
+def verify_reset_token(token):
+    try:
+        username = jwt.decode(token, key=app.secret_key,
+                              algorithms=['HS256'])['reset_password']
+        print(username)
+    except Exception as e:
+        print(e)
+        return
+    return User.query.filter_by(username=username).first()
+

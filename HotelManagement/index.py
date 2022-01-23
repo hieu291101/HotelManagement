@@ -426,5 +426,49 @@ def order_detail():
 #
 #     return jsonify({'code': 404})
 
+
+# reset_email password route
+@app.route('/password_reset', methods=['GET', 'POST'])
+def reset():
+    if request.method == 'GET':
+        return render_template('reset_password.html')
+
+    if request.method == 'POST':
+        email = request.form.get('email')
+        customer = Customer.verify_email(email)
+
+        if customer:
+            utils.send_email(customer)
+            flash("Chúng tôi vừa gửi mã xác nhận đến email, vui lòng kiểm trả email !", "success")
+
+        return redirect(url_for('user_login'))
+
+
+@app.route('/password_reset_verified/<token>', methods=['GET', 'POST'])
+def reset_verified(token):
+    user = utils.verify_reset_token(token)
+
+    if not user:
+        print('no user found')
+        return redirect(url_for('user_login'))
+
+    if request.method.__eq__('POST'):
+        password = request.form.get('password')
+        confirmpassword = request.form.get('confirmpassword')
+
+        try:
+            if password.strip().__eq__(confirmpassword.strip()):
+                user.set_password(password)
+                flash("Thay đổi mật khẩu thành công!!!", "success")
+                return redirect(url_for('user_login'))
+            else:
+                flash('Mật khẩu và mật khẩu xác nhận không khớp!!!', 'error')
+                return redirect(request.url)
+        except:
+            flash('Hệ thống đang có lỗi !!', 'error')
+
+    return render_template('reset_verified.html')
+
+
 if __name__ == "__main__":
     app.run(debug=True)

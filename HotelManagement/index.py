@@ -454,7 +454,7 @@ def reset():
             flash("Chúng tôi vừa gửi mã xác nhận đến email, vui lòng kiểm trả email !", "success")
         else:
             flash("Tài khoản và email đăng ký không khớp !!", "error")
-            return request.url
+            return redirect(request.url)
         return redirect(url_for('user_login'))
 
 

@@ -72,8 +72,8 @@ class Customer(User):
 
     @staticmethod
     def verify_email(email):
-        customer = Customer.query.filter_by(email=email).first()
-        return customer
+        if email:
+            return Customer.query.filter_by(email=email).first()
 
 
 class CustomerType(db.Model):

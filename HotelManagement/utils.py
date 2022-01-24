@@ -56,6 +56,13 @@ def check_username(username):
         return Customer.query.filter(Customer.username.__eq__(username.strip())).first()
 
 
+def check_reset_password(username, email):
+    customer1 = Customer.query.filter_by(username=username).first()
+    customer2 = Customer.query.filter_by(email=email).first()
+    if customer1.username.__eq__(customer2.username):
+        return customer1
+
+
 def add_customer(name, username, email, phone, identity, nationality,
                  gender, address, password, **kwargs):
     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())

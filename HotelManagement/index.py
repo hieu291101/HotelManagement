@@ -242,8 +242,8 @@ def user_register():
         try:
             if not utils.check_username(username):
                 if password.strip().__eq__(confirmpassword.strip()):
-                    if len(identity) < 9:
-                        if len(phone) < 8:
+                    if len(identity) > 9:
+                        if len(phone) > 8:
                             avatar = request.files.get('avatar')
                             if avatar:
                                 respose = cloudinary.uploader.upload(avatar)
@@ -445,13 +445,16 @@ def reset():
         return render_template('reset_password.html')
 
     if request.method == 'POST':
+        username = request.form.get('username')
         email = request.form.get('email')
-        customer = Customer.verify_email(email)
+        customer = utils.check_reset_password(username, email)
 
         if customer:
             utils.send_email(customer)
             flash("Chúng tôi vừa gửi mã xác nhận đến email, vui lòng kiểm trả email !", "success")
-
+        else:
+            flash("Tài khoản và email đăng ký không khớp !!", "error")
+            return request.url
         return redirect(url_for('user_login'))
 
 
@@ -474,7 +477,6 @@ def reset_verified(token):
                 return redirect(url_for('user_login'))
             else:
                 flash('Mật khẩu và mật khẩu xác nhận không khớp!!!', 'error')
-                return redirect(request.url)
         except:
             flash('Hệ thống đang có lỗi !!', 'error')
 

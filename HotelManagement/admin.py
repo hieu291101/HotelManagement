@@ -20,9 +20,9 @@ class CommonModelView(ModelView):
     edit_modal = True
     details_modal = True
 
+
     def is_accessible(self):
         return current_user.is_authenticated and current_user.type == 'administrator'
-
 
 
 class AdminView(CommonModelView):

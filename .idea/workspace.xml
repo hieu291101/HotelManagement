@@ -5,6 +5,9 @@
   </component>
   <component name="ChangeListManager">
 <<<<<<< HEAD
+    <list default="true" id="18162bcb-000d-425f-8bf5-19d2a7d04bf4" name="Changes" comment="Merge branch 'main' into feature-thanhdinh&#10;&#10;# Conflicts:&#10;#&#9;.idea/misc.xml&#10;#&#9;HotelManagement/index.py&#10;#&#9;HotelManagement/models.py&#10;#&#9;HotelManagement/templates/login.html" />
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
     <list default="true" id="7d6d2a85-e358-4e22-98dc-ada3258f1402" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
@@ -31,6 +34,7 @@
 >>>>>>> main
 =======
 >>>>>>> main
+>>>>>>> 3cbe540da6940ae3184f33a4444e9e07e81d8b8b
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -66,8 +70,16 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/HotelManagement/admin.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/HotelManagement/templates/layout/header.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/HotelManagement/utils.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/HotelManagement/templates/register.html" root0="FORCE_HIGHLIGHTING" />
+<<<<<<< HEAD
+    <setting file="file://$PROJECT_DIR$/HotelManagement/templates/admin/stats.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/HotelManagement/__init__.py" root0="FORCE_HIGHLIGHTING" />
+=======
 >>>>>>> main
+>>>>>>> 3cbe540da6940ae3184f33a4444e9e07e81d8b8b
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -83,13 +95,18 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
 <<<<<<< HEAD
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/HotelManagement/static/img" />
+=======
+<<<<<<< HEAD
     <property name="last_opened_file_path" value="$USER_HOME$/IdeaProjects/KiemTraTracNghiemTiengAnh" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
 =======
     <property name="last_opened_file_path" value="$PROJECT_DIR$/HotelManagement/static/css" />
+>>>>>>> 3cbe540da6940ae3184f33a4444e9e07e81d8b8b
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\trant\OneDrive\Documents\GitHub\HotelManagement\HotelManagement\static\img" />
       <recent name="D:\PyCharmProject\HotelManagement\HotelManagement\static\css" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -208,6 +225,10 @@
     </task>
     <servers />
   </component>
+<<<<<<< HEAD
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.css" />
+=======
   <component name="Vcs.Log.History.Properties">
     <option name="COLUMN_ID_ORDER">
       <list>
@@ -218,6 +239,7 @@
         <option value="Space.CommitStatus" />
       </list>
     </option>
+>>>>>>> 3cbe540da6940ae3184f33a4444e9e07e81d8b8b
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">

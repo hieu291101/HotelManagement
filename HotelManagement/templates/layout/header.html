@@ -15,9 +15,6 @@
             <li class="{{ 'nav-item nav-item-common active' if active_page == 'home' else 'nav-item nav-item-common' }}">
                 <a class="nav-link" href="{{ url_for('home') }}">Trang chủ</a>
             </li>
-            <li class="nav-item nav-item-common">
-                <a class="nav-link" href="#">Dịch vụ</a>
-            </li>
             {% if current_user.is_authenticated %}
                 <li class="nav-item nav-item-login">
                 <a class="nav-link" href="{{ url_for('user_pagination') }}">
@@ -63,7 +60,4 @@
       </button>
     </div>
     {% endif %} {% endfor %} {% endif %} {% endwith %}
-    {% block footer %}
-        {% include 'layout/footer.html' %}
-    {% endblock %}
 </div>

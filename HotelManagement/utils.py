@@ -280,18 +280,52 @@ def count_stats(month, kw=None):
 
 
 def add_order(name, username, email, phone, identity, nationality,
-              gender, address, password, room_id, check_in_date, check_out_date, **kwargs):
-    add_customer(name=name, username=username, email=email, phone=phone, identity=identity, password=password
-                 , nationality=nationality, gender=gender, address=address, **kwargs)
+              gender, address, password, room_name, check_in_date, check_out_date, **kwargs):
+    password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
+    name = str(name).strip()
+    username = str(username).strip()
+    customer_type_id = '1' if nationality == "Việt Nam" else '2'
+    location_id = '1'
+    room = load_room_by(room_name=room_name)
+
+    customer = Customer(name=name,
+                        gender=gender,
+                        email=email,
+                        id_number=identity,
+                        nationality=nationality,
+                        address=address,
+                        phone_number=phone,
+                        username=username,
+                        password=password,
+                        location_id=location_id,
+                        customer_type_id=customer_type_id,
+                        avatar=kwargs.get('avatar'))
+    db.session.add(customer)
+    db.session.commit()
+
     bill = Bill(surchage_id=1)
-    order_voucher = OrderVoucher(room_id=room_id, customer_id=get_customer_by_cmnd(cmnd=identity),
+    db.session.add(bill)
+    db.session.commit()
+
+    order_voucher = OrderVoucher(room_id=room.id, customer_id=customer.id,
                                  check_in_date=check_in_date,
-                                 check_out_date=check_out_date, bill_id=bill)
+                                 check_out_date=check_out_date, bill_id=bill.id)
 
     db.session.add(order_voucher)
     db.session.commit()
 
-    return order_voucher
+
+def add_order_for_customer(room_type, unit_price):
+    bill = Bill(unit_price=unit_price, surchage_id=1)
+    db.session.add(bill)
+    db.session.commit()
+
+    room = load_room_order_for_customer(room_type=room_type)
+    order_voucher = OrderVoucher(room_id=room.id, customer_id=current_user,
+                                 check_in_date=session.get('checkindate'),
+                                 check_out_date=session.get('checkindate'), bill_id=bill.id)
+    db.session.add(order_voucher)
+    db.session.commit()
 
 
 def load_room_order(from_date=None, to_date=None, room_type=None, page=1):
@@ -308,8 +342,8 @@ def load_room_order(from_date=None, to_date=None, room_type=None, page=1):
 
     room1 = room1.filter(~Room.id.in_(room))
 
-    # if room_type:
-    #     room1 = room1.filter(Customer.name.__eq__(room_type))
+    if room_type:
+        room1 = room1.filter(RoomType.room_type_name.contains(room_type))
 
     session['counter_room_to_order'] = room1.count()
 
@@ -320,6 +354,46 @@ def load_room_order(from_date=None, to_date=None, room_type=None, page=1):
     return room1.slice(start, end).all();
 
 
+def load_room_order_for_customer(from_date=None, to_date=None, room_type=None):
+    room = db.session.query(Room.id).select_from(Room) \
+        .join(Room.order_vouchers)
+    if from_date:
+        room = room.filter(OrderVoucher.check_out_date.__ge__(from_date))
+    if to_date:
+        room = room.filter(OrderVoucher.check_in_date.__le__(to_date))
+
+    room1 = db.session.query(RoomType.room_type_name, RoomType.maximum_customer, RoomType.price, Room.id, Room.status,
+                             Room.room_name) \
+        .join(RoomType, Room.room_type_id.__eq__(RoomType.id))
+
+    room1 = room1.filter(~Room.id.in_(room))
+
+    if room_type:
+        room1 = room1.filter(RoomType.room_type_name.__eq__(room_type))
+
+    return room1.first()
+
+
+# def load_room_order_customer(from_date=None, to_date=None, room_type=None):
+#     room = db.session.query(Room.id).select_from(Room) \
+#         .join(Room.order_vouchers)
+#     if from_date:
+#         room = room.filter(OrderVoucher.check_out_date.__ge__(from_date))
+#     if to_date:
+#         room = room.filter(OrderVoucher.check_in_date.__le__(to_date))
+#
+#     room1 = db.session.query(RoomType.room_type_name, RoomType.maximum_customer, RoomType.price, Room.id, Room.status,
+#                              Room.room_name) \
+#         .join(RoomType, Room.room_type_id.__eq__(RoomType.id))
+#
+#     room1 = room1.filter(~Room.id.in_(room))
+#
+#
+#     if room_type:
+#         room1 = room1.filter(Customer.name.__eq__(room_type))
+#
+#     return room1.first()
+
 def load_room_by(room_name=None):
     room = db.session.query(Room.id, Room.status,
                             Room.room_name)
@@ -327,15 +401,25 @@ def load_room_by(room_name=None):
     if room_name:
         room = room.filter(Room.room_name.__eq__(room_name))
 
-    return room.all()
+    return room.first()
+
+
+def load_room_by_type(room_type=None):
+    room = db.session.query(Room.id, Room.status,
+                            Room.room_name)
+
+    if room_type:
+        room = room.filter(Room.room_name.__eq__(room_type))
+
+    return room.first()
 
 
 def load_customer_by(customer_name=None):
     customer = db.session.query(Customer)
     if customer_name:
-        customer = customer.filter(Room.room_name.__eq__(customer_name))
+        customer = customer.filter(Customer.name.__eq__(customer_name))
 
-    return customer.all()
+    return customer.first()
 
 
 def change_bill_status(bill_id):
@@ -348,17 +432,26 @@ def change_bill_status(bill_id):
 
 def move_order_to_rental(room_name, customer_name, check_in_date, check_out_date, bill_id):
     room = load_room_by(room_name=room_name)
-    customer = load_room_by(customer_name=customer_name)
+    customer = load_customer_by(customer_name=customer_name)
 
     rental_voucher = RentalVoucher(room_id=room.id, customer_id=customer.id,
                                    check_in_date=check_in_date,
                                    check_out_date=check_out_date, bill_id=bill_id)
+
+    rental_voucher1 = db.session.query(RentalVoucher)
+    rental_voucher1 = rental_voucher1.filter(RentalVoucher.room_id.__eq__(room.id))
+    rental_voucher1 = rental_voucher1.filter(RentalVoucher.customer_id.__eq__(customer.id))
+    if rental_voucher1:
+        rental_voucher1.delete()
+
     order_voucher = db.session.query(OrderVoucher)
     order_voucher = order_voucher.filter(OrderVoucher.room_id.__eq__(room.id))
     order_voucher = order_voucher.filter(OrderVoucher.customer_id.__eq__(customer.id))
-    order_voucher.delete()
+    if order_voucher:
+        order_voucher.delete()
 
     db.session.add(rental_voucher)
+
     db.session.commit()
 
     return rental_voucher

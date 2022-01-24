@@ -30,10 +30,10 @@ def home():
 
         # Kiểm tra các ràng buộc
         if not check_dates:
-            flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "warning")
+            flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "error")
             return redirect(request.url)
         elif checkindatetime < datetime.now() and (checkindatetime - checkoutdatetime).days == 0:
-            flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "warning")
+            flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "error")
             return redirect(request.url)
         return redirect('/order')
 
@@ -49,19 +49,19 @@ def order_room():
         adults = req.get('adults')
         # Kiểm tra nhập đủ giá trị hay chưa
         if checkindate and checkoutdate and adults:
-            checkindatetime = datetime.datetime.strptime(checkindate, "%Y-%m-%d")
-            checkoutdatetime = datetime.datetime.strptime(checkindate, "%Y-%m-%d")
-            check_dates = utils.check_date(datetime.datetime.now(), checkindatetime)
+            checkindatetime = datetime.strptime(checkindate, "%Y-%m-%d")
+            checkoutdatetime = datetime.strptime(checkindate, "%Y-%m-%d")
+            check_dates = utils.check_date(datetime.now(), checkindatetime)
         else:
             flash('Chưa nhập đủ giá trị', 'danger')
             return redirect(request.url)
 
         # Kiểm tra các ràng buộc
         if not check_dates:
-            flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "warning")
+            flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "error")
             return redirect(request.url)
-        elif checkindatetime < datetime.datetime.now() and (checkindatetime - checkoutdatetime).days == 0:
-            flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "warning")
+        elif checkindatetime < datetime.now() and (checkindatetime - checkoutdatetime).days == 0:
+            flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "error")
             return redirect(request.url)
 
         session['checkindate'] = checkindate
@@ -80,7 +80,7 @@ def order_room():
 @app.context_processor
 def utility_processor():
     def count_room_by_room_type(roomtype):
-        counter_room_full = utils.count_room_full_by(from_date=session['checkindate'], to_date=session['checkoutdate'],
+        counter_room_full = utils.count_room_full_by(from_date=session.get('checkindate'), to_date=session.get('checkoutdate'),
                                                      room_type=roomtype)
         counter = utils.count_room_empty(room_type=roomtype)
         return counter - counter_room_full
@@ -107,10 +107,10 @@ def room_to_order():
 
         # Kiểm tra các ràng buộc
         if not check_dates:
-            flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "warning")
+            flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "error")
             return redirect(request.url)
         elif checkindatetime < datetime.now() and (checkindatetime - checkoutdatetime).days == 0:
-            flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "warning")
+            flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "error")
         #     return redirect(request.url)
 
         session['checkindate'] = checkindate
@@ -133,27 +133,12 @@ def room_to_order():
         session['gender'] = gender
         session['address'] = address
 
-        # if name and email and phone and identity and nationality and gender and address:
-        #     utils.add_order(name=name, )
 
     page = request.args.get('page', 1)
     keyword = request.args.get('keyword')
-    # roomname =request.args.get('roomname')
-    # roomid = utils.load_room_by(roomname)
-    #
-    # if utils.get_customer_by_cmnd(session.get('identity')):
-    #     utils.update_customer(name=session.get('name'), username=session.get('identity'), email=session.get('email'),
-    #                           phone=session.get('phone'), identity=session.get('identity'),
-    #                           nationality=session.get('nationality'),
-    #                           gender=session.get('gender'), address=session.get('address'), password=" ")
-    # else:
-    #     utils.add_order(name=session.get('name'), username=session.get('identity'), email=session.get('email'),
-    #                     phone=session.get('phone'), identity=session.get('identity'),
-    #                     nationality=session.get('nationality'),
-    #                     gender=session.get('gender'), address=session.get('address'), password=" ", room_id=roomid,
-    #                     check_in_date=session.get('checkindate'), check_out_date=session.get('checkoutdate'))
 
-    room_to_order = utils.load_room_order(session.get('checkindate'), session.get('checkoutdate'), page=int(page))
+
+    room_to_order = utils.load_room_order(session.get('checkindate'), session.get('checkoutdate'), room_type=keyword, page=int(page))
     counter = session.get('counter_room_to_order')
 
     return render_template('room.html', room_to_order=room_to_order,
@@ -168,27 +153,24 @@ def add_order_voucher():
     email = data.get('email')
     phone = data.get('phone')
     identity = data.get('identity')
+    username = identity
     nationality = data.get('nationality')
     gender = data.get('gender')
     address = data.get('address')
     room_name = data.get('room_name')
-    check_in_date = data.get('check_in_date')
-    check_out_date = data.get('check_out_date')
+    check_in_date = datetime.strptime(data.get('check_in_date'), "%Y-%m-%d")
+    check_out_date = datetime.strptime(data.get('check_out_date'), "%Y-%m-%d")
 
-    room_id = utils.load_room_by(room_name)
     try:
-        o = utils.add_order(name=name, username=identity, email=email,
+        utils.add_order(name=name, username=username, email=email,
                             phone=phone, identity=identity,
                             nationality=nationality, gender=gender,
-                            address=address, password=" ", room_id=room_id,
+                            address=address, password=' ', room_name=room_name,
                             check_in_date=check_in_date, check_out_date=check_out_date)
     except:
         return {'status': 404, 'err_msg': 'Chuong trinh dang bi loi!!!'}
 
-    return {'status': 201, 'order': {
-        'room_id': o.room_id,
-        'customer_name': o.customer_id
-    }}
+    return {'status': 201}
 
 
 @app.route('/api/payment', methods=['post'])
@@ -218,6 +200,25 @@ def order_to_rental():
     try:
         o = utils.move_order_to_rental(room_name=room_name, customer_name=customer_name, check_in_date=check_in_date,
                                        check_out_date=check_out_date, bill_id=bill_id)
+    except:
+        return {'status': 404, 'err_msg': 'Chuong trinh dang bi loi!!!'}
+
+    return {'status': 201}
+
+@app.route('/api/order-voucher-customer', methods=['post'])
+def order_vouchers_customer():
+    data = request.json
+    room_type = data.get('room_type')
+    unit_price = data.get('unit_price')
+    quantity = data.get('quantity')
+    x = 0
+
+    try:
+        for i in room_type:
+            while(x < quantity[room_type.index(i)]):
+                utils.add_order_for_customer(room_type=room_type, unit_price=unit_price[room_type.index(i)])
+                x = x+1
+            x=0
     except:
         return {'status': 404, 'err_msg': 'Chuong trinh dang bi loi!!!'}
 
@@ -480,7 +481,7 @@ def reset_verified(token):
         except:
             flash('Hệ thống đang có lỗi !!', 'error')
 
-    return render_template('reset_verified.html')
+    return render_template('reset_verified.html', username=user.username)
 
 
 if __name__ == "__main__":

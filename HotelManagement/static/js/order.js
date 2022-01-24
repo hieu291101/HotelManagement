@@ -24,6 +24,7 @@ function addToOrder(id, room_type_name, capacity, price){
 }
 
 function addOrderVoucher(roomName) {
+    let choice = confirm('Bạn có chắc chắn đặt phòng hay không?')
     let name = document.getElementsByName('name')
     let email = document.getElementsByName('email')
     let phone = document.getElementsByName('phone')
@@ -52,16 +53,42 @@ function addOrderVoucher(roomName) {
         }
     }).then(res => res.json()).then(data => {
         if (data.status == 201) {
-            let o = data.order
-            alert(o.room_id)
+            alert('Đặt thành công')
+            location.reload()
+        } else if (data.status == 404)
+            alert(data.err_msg)
+    })
+}
+
+function addOrderVoucherForCustomer() {
+    roomType = document.getElementsByName('roomtype')
+    quantity = document.getElementsByName('quantity')
+    unitPrice = document.getElementsByName('unitprice')
+
+    let choice = confirm('Bạn có chắc chắn đặt phòng hay không?')
+    fetch('/api/order-voucher-customer', {
+        method: 'post',
+        body: JSON.stringify({
+            'room_type': roomType,
+            'unit_price': unitPrice,
+            'quantity': quantity
+        }),
+        headers: {
+            'Content-Type':' application/json'
+        }
+    }).then(res => res.json()).then(data => {
+        if (data.status == 201) {
+            alert('Đặt thành công')
+            location.reload()
         } else if (data.status == 404)
             alert(data.err_msg)
     })
 }
 
 function updateStatusBill(billId) {
-
-    fetch('/api/payment', {
+    let choice = confirm('Bạn có chắc chắn thanh toán hay không?')
+    if(choice == true) {
+        fetch('/api/payment', {
         method: 'post',
         body: JSON.stringify({
             'bill_id': billId
@@ -71,16 +98,18 @@ function updateStatusBill(billId) {
         }
     }).then(res => res.json()).then(data => {
         if (data.status == 201) {
-            alert('Thanh toán thành công')
+            confirm('Thanh toán thành công')
             location.reload()
         } else if (data.status == 404)
             alert(data.err_msg)
     })
+    }
 }
 
 function moveOrderToRental(roomName, customerName, checkInDate, checkOutDate, billId) {
-
-    fetch('/api/order-to-rental', {
+    let choice = confirm('Bạn có chắc chắn thuê hay không?')
+    if (choice == true) {
+        fetch('/api/order-to-rental', {
         method: 'post',
         body: JSON.stringify({
             'room_name': roomName,
@@ -92,11 +121,13 @@ function moveOrderToRental(roomName, customerName, checkInDate, checkOutDate, bi
         headers: {
             'Content-Type':' application/json'
         }
-    }).then(res => res.json()).then(data => {
-        if (data.status == 201) {
-            alert('Thuê thành công')
-            location.reload()
-        } else if (data.status == 404)
-            alert(data.err_msg)
-    })
+        }).then(res => res.json()).then(data => {
+            if (data.status == 201) {
+                alert('Thuê thành công')
+                location.reload()
+            } else if (data.status == 404)
+                alert(data.err_msg)
+        })
+    }
+
 }

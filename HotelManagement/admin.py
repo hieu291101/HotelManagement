@@ -14,15 +14,15 @@ class AuthenticationBaseView(BaseView):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.type == 'administrator'
 
+
 class CommonModelView(ModelView):
     can_view_details = True
     can_export = True
     edit_modal = True
     details_modal = True
 
-    # def is_accessible(self):
-    #     return current_user.is_authenticated and current_user.type == 'administrator'
-
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.type == 'administrator'
 
 
 class AdminView(CommonModelView):

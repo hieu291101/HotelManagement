@@ -43,16 +43,16 @@
                                         <tr>
                                             <form>
                                                 <th scope="col">{{ loop.index }}</th>
-                                                <td >
+                                                <td name="roomtype">
                                                     {{ t.room_type_name }}
                                                 </td>
                                                 <td>
                                                     {{ t.capacity }} <span> người</span>
                                                 </td>
-                                                <td>
-                                                    {{ "{:,.1f}".format(t.price) }} <span> đ</span>
+                                                <td name="unitprice">
+                                                    {{ (t.price) }} <span> đ</span>
                                                 </td>
-                                                <td>{{ t.quantity }}</td>
+                                                <td name="quantity">{{ t.quantity }}</td>
                                             </form>
                                         </tr>
                                         {% endfor %}
@@ -67,7 +67,7 @@
                                         <h5>Tổng giá tiền: {{ "{:,.1f}".format(stats.total_amount) }}</h5>
                                     </div>
 
-                                    <button type="button" class="btn btn-primary" onclick="">Đặt phòng</button>
+                                    <button type="button" class="btn btn-primary" onclick="addOrderVoucherForCustomer()">Đặt phòng</button>
                                 </div>
                             </div>
                         </div>

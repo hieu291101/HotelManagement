@@ -81,7 +81,7 @@ def order_room():
 @app.context_processor
 def utility_processor():
     def count_room_by_room_type(roomtype):
-        counter_room_full = utils.count_room_full_by(from_date=session['checkindate'], to_date=session['checkoutdate'],
+        counter_room_full = utils.count_room_full_by(from_date=session.get('checkindate'), to_date=session.get('checkoutdate'),
                                                      room_type=roomtype)
         counter = utils.count_room_empty(room_type=roomtype)
         return counter - counter_room_full

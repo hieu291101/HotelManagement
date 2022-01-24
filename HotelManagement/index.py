@@ -240,28 +240,37 @@ def user_register():
         avatar_path = None
 
         try:
-            if password.strip().__eq__(confirmpassword.strip()):
-                avatar = request.files.get('avatar')
-                if avatar:
-                    respose = cloudinary.uploader.upload(avatar)
-                    avatar_path = respose['secure_url']
+            if not utils.check_username(username):
+                if password.strip().__eq__(confirmpassword.strip()):
+                    if len(identity) < 9:
+                        if len(phone) < 8:
+                            avatar = request.files.get('avatar')
+                            if avatar:
+                                respose = cloudinary.uploader.upload(avatar)
+                                avatar_path = respose['secure_url']
 
-                utils.add_customer(name=name,
-                                   username=username,
-                                   email=email,
-                                   phone=phone,
-                                   identity=identity,
-                                   nationality=nationality,
-                                   gender=gender,
-                                   address=address,
-                                   password=password,
-                                   avatar=avatar_path)
-                flash('Đăng ký thành công', 'success')
-                return redirect(url_for('user_login'))
+                            utils.add_customer(name=name,
+                                               username=username,
+                                               email=email,
+                                               phone=phone,
+                                               identity=identity,
+                                               nationality=nationality,
+                                               gender=gender,
+                                               address=address,
+                                               password=password,
+                                               avatar=avatar_path)
+                            flash('Đăng ký thành công', 'success')
+                            return redirect(url_for('user_login'))
+                        else:
+                            flash("Số điện thoại không hợp lệ!!", "error")
+                    else:
+                        flash("Chứng minh nhân dân hoặc căn cước công dân không hợp lệ !!", "error")
+                else:
+                    flash('Mật khẩu không khớp', 'error')
             else:
-                flash('Mật khẩu không khớp', 'warning')
+                flash("Tài khoản đã tồn tại !!", "error")
         except:
-            flash('Hệ thống đang có lỗi !!', 'warning')
+            flash('Hệ thống đang có lỗi !!', 'error')
 
     return render_template('register.html')
 

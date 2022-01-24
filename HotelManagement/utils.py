@@ -10,6 +10,7 @@ from sqlalchemy import text, extract, func
 from HotelManagement.models import User, Customer, RentalVoucher, OrderVoucher, Room, Bill, Surchange, CustomerType, \
     RoomType, Status
 
+
 def get_user_by_id(user_id):
     return User.query.get(user_id)
 
@@ -49,6 +50,10 @@ def check_date(orderdate, checkindate):
 #                                 Customer.phone_number: phone, Customer.id_number: identity,
 #                                 Customer.nationality: nationality,
 #                                 Customer.gender: gender, Customer.address: address})
+
+def check_username(username):
+    if username:
+        return Customer.query.filter(Customer.username.__eq__(username.strip())).first()
 
 
 def add_customer(name, username, email, phone, identity, nationality,
@@ -267,7 +272,6 @@ def count_stats(month, kw=None):
     return i.all()
 
 
-
 def add_order(name, username, email, phone, identity, nationality,
               gender, address, password, room_id, check_in_date, check_out_date, **kwargs):
     add_customer(name=name, username=username, email=email, phone=phone, identity=identity, password=password
@@ -351,6 +355,8 @@ def move_order_to_rental(room_name, customer_name, check_in_date, check_out_date
     db.session.commit()
 
     return rental_voucher
+
+
 # def load_room_not_in(room_id=None):
 
 # def add_order_voucher()
@@ -381,4 +387,3 @@ def verify_reset_token(token):
         print(e)
         return
     return User.query.filter_by(username=username).first()
-

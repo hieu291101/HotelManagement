@@ -304,6 +304,17 @@ def add_order(name, username, email, phone, identity, nationality,
     db.session.add(order_voucher)
     db.session.commit()
 
+def add_order_for_customer(room_type, unit_price):
+    bill = Bill(unit_price=unit_price,surchage_id=1)
+    db.session.add(bill)
+    db.session.commit()
+
+    room = load_room_order_for_customer(room_type=room_type)
+    order_voucher = OrderVoucher(room_id=room.id, customer_id=current_user,
+                                 check_in_date=session.get('checkindate'),
+                                 check_out_date=session.get('checkindate'), bill_id=bill.id)
+    db.session.add(order_voucher)
+    db.session.commit()
 
 def load_room_order(from_date=None, to_date=None, room_type=None, page=1):
     room = db.session.query(Room.id).select_from(Room) \
@@ -329,6 +340,25 @@ def load_room_order(from_date=None, to_date=None, room_type=None, page=1):
     end = start + page_size
 
     return room1.slice(start, end).all();
+
+def load_room_order_for_customer(from_date=None, to_date=None, room_type=None):
+    room = db.session.query(Room.id).select_from(Room) \
+        .join(Room.order_vouchers)
+    if from_date:
+        room = room.filter(OrderVoucher.check_out_date.__ge__(from_date))
+    if to_date:
+        room = room.filter(OrderVoucher.check_in_date.__le__(to_date))
+
+    room1 = db.session.query(RoomType.room_type_name, RoomType.maximum_customer, RoomType.price, Room.id, Room.status,
+                             Room.room_name) \
+        .join(RoomType, Room.room_type_id.__eq__(RoomType.id))
+
+    room1 = room1.filter(~Room.id.in_(room))
+
+    if room_type:
+        room1 = room1.filter(RoomType.room_type_name.__eq__(room_type))
+
+    return room1.first()
 
 # def load_room_order_customer(from_date=None, to_date=None, room_type=None):
 #     room = db.session.query(Room.id).select_from(Room) \
@@ -358,6 +388,16 @@ def load_room_by(room_name=None):
         room = room.filter(Room.room_name.__eq__(room_name))
 
     return room.first()
+
+def load_room_by_type(room_type=None):
+    room = db.session.query(Room.id, Room.status,
+                            Room.room_name)
+
+    if room_type:
+        room = room.filter(Room.room_name.__eq__(room_type))
+
+    return room.first()
+
 
 
 def load_customer_by(customer_name=None):

@@ -50,9 +50,9 @@ def order_room():
         adults = req.get('adults')
         # Kiểm tra nhập đủ giá trị hay chưa
         if checkindate and checkoutdate and adults:
-            checkindatetime = datetime.datetime.strptime(checkindate, "%Y-%m-%d")
-            checkoutdatetime = datetime.datetime.strptime(checkindate, "%Y-%m-%d")
-            check_dates = utils.check_date(datetime.datetime.now(), checkindatetime)
+            checkindatetime = datetime.strptime(checkindate, "%Y-%m-%d")
+            checkoutdatetime = datetime.strptime(checkindate, "%Y-%m-%d")
+            check_dates = utils.check_date(datetime.now(), checkindatetime)
         else:
             flash('Chưa nhập đủ giá trị', 'danger')
             return redirect(request.url)
@@ -61,7 +61,7 @@ def order_room():
         if not check_dates:
             flash('Thời điểm nhận phòng không quá 28 ngày kể từ thời điểm đặt phòng', "error")
             return redirect(request.url)
-        elif checkindatetime < datetime.datetime.now() and (checkindatetime - checkoutdatetime).days == 0:
+        elif checkindatetime < datetime.now() and (checkindatetime - checkoutdatetime).days == 0:
             flash('Thời điểm nhận phòng hoặc thời điểm trả phòng không hợp lệ', "error")
             return redirect(request.url)
 
@@ -201,6 +201,25 @@ def order_to_rental():
     try:
         o = utils.move_order_to_rental(room_name=room_name, customer_name=customer_name, check_in_date=check_in_date,
                                        check_out_date=check_out_date, bill_id=bill_id)
+    except:
+        return {'status': 404, 'err_msg': 'Chuong trinh dang bi loi!!!'}
+
+    return {'status': 201}
+
+@app.route('/api/order-voucher-customer', methods=['post'])
+def order_vouchers_customer():
+    data = request.json
+    room_type = data.get('room_type')
+    unit_price = data.get('unit_price')
+    quantity = data.get('quantity')
+    x = 0
+
+    try:
+        for i in room_type:
+            while(x < quantity[room_type.index(i)]):
+                utils.add_order_for_customer(room_type=room_type, unit_price=unit_price[room_type.index(i)])
+                x = x+1
+            x=0
     except:
         return {'status': 404, 'err_msg': 'Chuong trinh dang bi loi!!!'}
 

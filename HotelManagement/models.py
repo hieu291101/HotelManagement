@@ -1,7 +1,12 @@
 import enum
+import hashlib
+import os
+from time import time
+
+import jwt
 from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Enum
 from sqlalchemy.orm import relationship, backref
-from HotelManagement import db
+from HotelManagement import db, app
 from datetime import datetime
 from flask_login import UserMixin
 
@@ -10,8 +15,8 @@ class User(db.Model, UserMixin):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String(50), nullable=False, unique=True)
-    password = Column(String(50), nullable=False)
+    username = Column(String(50), unique=True)
+    password = Column(String(50))
     login_status = Column(Boolean, default=True)
     register_date = Column(DateTime, default=datetime.now())
     avatar = Column(String(100))
@@ -27,8 +32,8 @@ class Customer(User):
 
     id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     name = Column(String(50), nullable=False)
-    gender = Column(String(10), nullable=False)
-    email = Column(String(30), nullable=False)
+    gender = Column(String(10), nullable=False, default='Khác')
+    email = Column(String(30))
     id_number = Column(String(20), nullable=False)  # Căn cước công dân
     nationality = Column(String(20), nullable=False)
     address = Column(String(60), nullable=False)
@@ -46,6 +51,29 @@ class Customer(User):
     def __str__(self):
         return self.name
 
+    def set_password(self, password):
+        self.password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
+        db.session.commit()
+
+    def get_reset_token(self, expires=500):
+        return jwt.encode({'reset_password': self.username, 'exp': time() + expires},
+                          key=app.secret_key)
+
+    @staticmethod
+    def verify_reset_token(token):
+        try:
+            username = jwt.decode(token, key=app.secret_key,
+                                  algorithms=['HS256'])['reset_password']
+            print(username)
+        except Exception as e:
+            print(e)
+            return
+        return Customer.query.filter_by(username=username).first()
+
+    @staticmethod
+    def verify_email(email):
+        customer = Customer.query.filter_by(email=email).first()
+        return customer
 
 
 class CustomerType(db.Model):
@@ -100,15 +128,17 @@ class Administrator(User):
         'polymorphic_identity': 'administrator'
     }
 
+
 class Status(enum.Enum):
     DONE = 'Xong'
     NONE = 'Chưa'
+
 
 class Room(db.Model):
     __tablename__ = 'room'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    room_name = Column(String(30), nullable=False)
+    room_name = Column(String(30), nullable=False, unique=True)
     status = Column(Enum(Status), default=Status.NONE)
     capacity = Column(Integer, nullable=False, default=0)  # số người trên phòng
 
@@ -118,7 +148,6 @@ class Room(db.Model):
 
     def __str__(self):
         return self.room_name
-
 
 
 class RoomType(db.Model):
@@ -146,6 +175,7 @@ class Bill(db.Model):
     status = Column(Enum(Status), default=Status.NONE)
     rental_vouchers = relationship('RentalVoucher', backref='bill', lazy=True)
     order_vouchers = relationship('OrderVoucher', backref='bill', lazy=True)
+
     # rental_voucher = relationship('RentalVoucher', backref=backref('bill', uselist=False, lazy=True),
     #                               foreign_keys='[RentalVoucher.bill_id]', uselist=False, lazy=True)
     # order_voucher = relationship('OrderVoucher', backref=backref('bill', uselist=False, lazy=True),
@@ -175,9 +205,9 @@ class RentalVoucher(db.Model):
     check_out_date = Column(DateTime, default=datetime.now())
     bill_id = Column(Integer, ForeignKey('bill.id'), nullable=False)
 
-
     def __str__(self):
         return self.__tablename__
+
 
 class OrderVoucher(db.Model):
     __tablename__ = 'order_voucher'

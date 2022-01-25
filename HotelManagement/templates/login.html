@@ -15,7 +15,7 @@
             </div>
             <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
                 <form method="post" action="{{ url_for('user_login') }}">
-                    <!-- Email input -->
+                    <!-- username input -->
                     <div class="form-outline mb-4">
                         <label class="form-label" for="form1Example13">Tài khoản</label>
                         <input type="text" id="form1Example13" class="form-control " placeholder="Nhập tài khoản..."
@@ -41,7 +41,7 @@
                             />
                             <label class="form-check-label" for="form1Example3"> Ghi nhớ </label>
                         </div>
-                        <a href="#!">Quên mật khẩu?</a>
+                        <a href="{{ url_for('reset') }}">Quên mật khẩu?</a>
                     </div>
 
                     <!-- Submit button -->

@@ -1,0 +1,96 @@
+{% extends 'admin/base.html' %}
+{% block body %}
+<br>
+<h1 class="text-center">Thống kê mật độ thuê phòng</h1>
+<hr>
+<br>
+<div id="tab2" class="row">
+    <div class="table table-striped col-md-5 col-xs-12">
+        <table class="table">
+            <thead class="text-center">
+                <tr>
+                    <th scope="col">Phòng</th>
+                    <th scope="col">Số ngày thuê</th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+                {% for i in count %}
+                <tr>
+                    <td>{{ i[1] }}</td>
+                    <td>{{ i[2] }} ngày</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-7 col-xs-12">
+        <form>
+            <div class="form-group">
+                <input type="number" class="form-control" name="kw" min="1" max="12" placeholder="Nhập tháng..."/>
+            </div>
+            <div class="form-group">
+                <input type="number" class="form-control" min="2010" name="year" placeholder="Nhập năm..."/>
+            </div>
+            <input type="submit" value="Thống kê" class="btn btn-danger" />
+        </form>
+        <br>
+        <div>
+            <canvas id="MyCountChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let labels2 = []
+    let data2 = []
+    let colors2 = []
+    let borderColors2 = []
+    let r, g, b;
+
+
+    {% for i in count %}
+    {% if i[2] %}
+        labels2.push('{{ i[1] }}')
+        data2.push( {{ i[2] }})
+
+        r = parseInt(Math.random() * 255)
+        g = parseInt(Math.random() * 255)
+        b = parseInt(Math.random() * 255)
+
+        colors2.push(`rgba(${r}, ${g}, ${b}, 0.2)`)
+        borderColors2.push(`rgba(${r}, ${g}, ${b}, 1)`)
+    {% endif %}
+    {% endfor %}
+
+    window.onload = function() {
+        const ctx2 = document.getElementById('MyCountChart').getContext('2d');
+
+        loadChart2(ctx2, labels2, data2, 'bar', colors2, borderColors2)
+    }
+
+function loadChart2(ctx2, labels2, data2, type, colors2, borderColors2) {
+    const myChart = new Chart(ctx2, {
+        type: type,
+        data: {
+            labels: labels2,
+            datasets: [{
+                label: 'Thống kê mật độ sử dụng phòng',
+                data: data2,
+                backgroundColor: colors2,
+                borderColor: borderColors2,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+</script>
+<br>
+{% endblock %}

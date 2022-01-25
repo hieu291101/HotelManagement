@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from HotelManagement import admin, db, utils
 from HotelManagement.models import User, Administrator, Customer, CustomerType, Staff, Room, RoomType, Bill, Surchange, \
     RentalVoucher, OrderVoucher
@@ -7,6 +5,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin import BaseView, expose
 from flask_login import logout_user, current_user
 from flask import redirect, request
+from datetime import datetime
 
 
 # Đã đăng nhập
@@ -155,19 +154,39 @@ class LogoutView(AuthenticationBaseView):
 
 class StatsView(BaseView):
     @expose('/')
-    def index(self):
+    def Get_information_to_stats(self):
         from_date = request.args.get('from_date')
         to_date = request.args.get('to_date')
-        month = request.args.get("year", datetime.now().year)
-        mon = request.args.get("year", datetime.now().year)
-        kw = request.args.get('kw')
-        keyy = request.args.get('keyy')
-        year = request.args.get('year')
+        kws = request.args.get('kws')
 
         return self.render('admin/stats.html',
-                           stats=utils.month_stats(mon=2021, from_date=from_date,
-                                                   to_date=to_date, keyy=keyy, year=year),
-                           count=utils.count_stats(month=2021, kw=kw))
+                           stats=utils.month_stats(from_date=from_date,
+                                                   to_date=to_date,
+                                                   kws=kws))
+
+
+class StatsMonth(BaseView):
+    @expose('/')
+    def Stats_turnover_by_month(self):
+        year = request.args.get('year', datetime.now().year)
+        from_month = request.args.get('from_month')
+        to_month = request.args.get('to_month')
+
+        return self.render('admin/statsmonth.html',
+                           turnover=utils.turnover_stats(year=year,
+                                                         from_month=from_month,
+                                                         to_month=to_month))
+
+
+class StatsDensity(BaseView):
+    @expose('/')
+    def Room_density_stats_by_month(self):
+        years = request.args.get('year', datetime.now().year)
+        kw = request.args.get('kw')
+
+        return self.render('admin/statsdensity.html',
+                           count=utils.count_stats(years=years,
+                                                   kw=kw))
 
 
 admin.add_view(CommonModelView(User, db.session, name='Người dùng'))
@@ -183,8 +202,10 @@ admin.add_view(SurchangeView(Surchange, db.session, name='Phụ thu', category='
 admin.add_view(RentalVoucherView(RentalVoucher, db.session, name='Phiếu thuê'))
 admin.add_view(OrderVoucherView(OrderVoucher, db.session, name='Phiếu đặt'))
 
+admin.add_view(StatsView(name='Doanh thu theo phòng', category='Thống kê báo cáo'))
+admin.add_view(StatsMonth(name='Doanh thu theo tháng', category='Thống kê báo cáo'))
+admin.add_view(StatsDensity(name='Mật độ', category='Thống kê báo cáo'))
 admin.add_view(LogoutView(name='Đăng xuất'))
-admin.add_view(StatsView(name='Thống kê báo cáo'))
 
 admin.add_sub_category(name="customer", parent_name="Khách hàng")
 admin.add_sub_category(name="room", parent_name="Phòng")
